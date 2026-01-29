@@ -1,1 +1,176 @@
-/* You can add global styles to this file, and also import other style files */
+/* -----------------------------
+   Global CSS Variables
+------------------------------- */
+:root {
+  /* Primary Colors */
+  --color-primary-blue: #1e90ff;
+  --color-primary-green: #28a745;
+  --color-primary-red: #dc3545;
+  --color-primary-yellow: #ffc107;
+
+  /* Darker / hover variants */
+  --color-primary-blue-dark: #187bdb;
+  --color-primary-green-dark: #218838;
+  --color-primary-red-dark: #b02a37;
+  --color-primary-yellow-dark: #e0a800;
+
+  /* Background / Text */
+  --color-background: #ffffff;
+  --color-text: #000000;
+
+  /* Typography */
+  --font-family-base: 'Inter', system-ui, sans-serif;
+  --font-family-mono: 'Fira Code', monospace;
+
+  /* Border & Spacing */
+  --border-radius: 0.5rem;
+  --spacing-xs: 0.25rem;
+  --spacing-sm: 0.5rem;
+  --spacing-md: 1rem;
+  --spacing-lg: 2rem;
+}
+
+/* -----------------------------
+   Global Resets & Base Styles
+------------------------------- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: var(--color-background);
+  color: var(--color-text);
+  font-family: var(--font-family-base);
+  line-height: 1.5;
+}
+
+/* Links */
+a {
+  color: var(--color-primary-blue);
+  text-decoration: none;
+  transition: color 0.2s ease;
+
+  &:hover {
+    color: var(--color-primary-blue-dark);
+  }
+}
+
+/* Buttons */
+button {
+  font-family: var(--font-family-base);
+  cursor: pointer;
+  border-radius: var(--border-radius);
+  padding: var(--spacing-sm) var(--spacing-md);
+  border: none;
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
+
+  &.btn-blue {
+    background-color: var(--color-primary-blue);
+    color: #fff;
+
+    &:hover {
+      background-color: var(--color-primary-blue-dark);
+    }
+  }
+
+  &.btn-green {
+    background-color: var(--color-primary-green);
+    color: #fff;
+
+    &:hover {
+      background-color: var(--color-primary-green-dark);
+    }
+  }
+
+  &.btn-red {
+    background-color: var(--color-primary-red);
+    color: #fff;
+
+    &:hover {
+      background-color: var(--color-primary-red-dark);
+    }
+  }
+
+  &.btn-yellow {
+    background-color: var(--color-primary-yellow);
+    color: #000;
+
+    &:hover {
+      background-color: var(--color-primary-yellow-dark);
+    }
+  }
+}
+
+/* Headings */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-family-base);
+  color: var(--color-text);
+  margin-bottom: var(--spacing-md);
+}
+
+/* Paragraphs */
+p {
+  margin-bottom: var(--spacing-md);
+}
+
+/* Utility Classes */
+.text-center {
+  text-align: center;
+}
+
+.mb-sm {
+  margin-bottom: var(--spacing-sm);
+}
+
+.mb-md {
+  margin-bottom: var(--spacing-md);
+}
+
+.mb-lg {
+  margin-bottom: var(--spacing-lg);
+}
+
+/* Container */
+.container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 var(--spacing-md);
+}
+
+/* Status indicators (optional) */
+.status {
+  display: inline-block;
+  padding: 0.25rem 0.5rem;
+  border-radius: var(--border-radius);
+  color: #fff;
+  font-size: 0.875rem;
+
+  &.success {
+    background-color: var(--color-primary-green);
+  }
+
+  &.error {
+    background-color: var(--color-primary-red);
+  }
+
+  &.warning {
+    background-color: var(--color-primary-yellow);
+    color: #000;
+  }
+
+  &.info {
+    background-color: var(--color-primary-blue);
+  }
+}
