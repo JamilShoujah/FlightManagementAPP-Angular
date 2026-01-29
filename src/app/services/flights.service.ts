@@ -1,16 +1,22 @@
 import { Injectable } from '@angular/core';
-import { Observable, of } from 'rxjs';
+import { Observable, BehaviorSubject } from 'rxjs';
 import { FLIGHTS } from '../constants/flights.constant';
 import { Flight } from '../models/flights.model';
 
 @Injectable({
-  providedIn: 'root', // makes it available app-wide
+  providedIn: 'root',
 })
 export class FlightService {
-  constructor() {}
+  // Use a BehaviorSubject to make the data "live" across the app
+  private flightsData = [...FLIGHTS];
+  private flightsSubject = new BehaviorSubject<Flight[]>(this.flightsData);
 
-  // For now, just return the constant array as an Observable
   getFlights(): Observable<Flight[]> {
-    return of(FLIGHTS);
+    return this.flightsSubject.asObservable();
+  }
+
+  addFlight(newFlight: Flight): void {
+    this.flightsData = [...this.flightsData, newFlight];
+    this.flightsSubject.next(this.flightsData);
   }
 }
