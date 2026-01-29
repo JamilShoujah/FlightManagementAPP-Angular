@@ -666,3 +666,37 @@ input.ng-invalid.ng-touched {
   width: fit-content;
   text-transform: uppercase;
 }
+
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  background: none;
+  border: none;
+  padding: 0.5rem 0;
+  margin-bottom: 1rem;
+  color: #64748b;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-decoration: none;
+
+  // The Arrow Icon using a CSS border trick
+  &::before {
+    content: '';
+    width: 8px;
+    height: 8px;
+    border-left: 2px solid currentColor;
+    border-bottom: 2px solid currentColor;
+    transform: rotate(45deg);
+    transition: transform 0.2s ease;
+  }
+
+  &:hover {
+    color: #2563eb;
+    &::before {
+      transform: rotate(45deg) translate(2px, -2px); // Subtle "push" effect
+    }
+  }
+}

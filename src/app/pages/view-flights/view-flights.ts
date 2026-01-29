@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FlightService } from '../../services/flights.service';
-import { Flight } from '../../models/flights.model';
+import { Router } from '@angular/router';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Flight } from '../../models/flights.model';
+import { FlightService } from '../../services/flights.service';
 
 @Component({
   selector: 'app-view-flights',
@@ -17,6 +18,11 @@ export class ViewFlights implements OnInit {
   flightForm: FormGroup;
   today: Date = new Date();
 
+  // Settings & Dropdowns
+  hideDeparted: boolean = false;
+  systemDateStr: string = '';
+  minDepartureDate: string = '';
+
   airlines: string[] = [
     'MEA',
     'Turkish Airlines',
@@ -29,15 +35,13 @@ export class ViewFlights implements OnInit {
     'Delta Airlines',
     'Etihad Airways',
   ];
-  foodOptions: string[] = ['Mixed', 'Meat', 'Chicken', 'Fish', 'Vegetable', 'Vegan'];
 
-  hideDeparted: boolean = false;
-  systemDateStr: string = '';
-  minDepartureDate: string = '';
+  foodOptions: string[] = ['Mixed', 'Meat', 'Chicken', 'Fish', 'Vegetable', 'Vegan'];
 
   constructor(
     private flightService: FlightService,
     private fb: FormBuilder,
+    private router: Router,
   ) {
     this.flightForm = this.fb.group({
       brand: ['', Validators.required],
@@ -64,6 +68,10 @@ export class ViewFlights implements OnInit {
   updateSystemTime() {
     this.today = new Date();
     this.systemDateStr = this.today.toISOString().split('T')[0];
+  }
+
+  goBack() {
+    this.router.navigate(['/']);
   }
 
   get filteredFlights(): Flight[] {
