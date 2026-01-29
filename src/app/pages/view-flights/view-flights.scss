@@ -1,0 +1,124 @@
+.flights-container {
+  max-width: 1300px;
+  margin: 2rem auto;
+  padding: 0 1.5rem;
+  font-family: 'Inter', sans-serif; // Assuming a modern font is available
+
+  .header-section {
+    margin-bottom: 2rem;
+    h2 {
+      font-size: 1.75rem;
+      font-weight: 700;
+      color: #1a1a1a;
+      margin-bottom: 0.5rem;
+    }
+    p {
+      color: #666;
+      font-size: 0.95rem;
+    }
+  }
+
+  .table-wrapper {
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    overflow: hidden;
+    border: 1px solid #edf2f7;
+  }
+
+  .modern-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+
+    thead {
+      background-color: #f8fafc;
+      border-bottom: 2px solid #edf2f7;
+
+      th {
+        padding: 1rem 1.25rem;
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        letter-spacing: 0.025em;
+        color: #64748b;
+        font-weight: 600;
+      }
+    }
+
+    tbody {
+      tr {
+        transition: background-color 0.2s ease;
+        border-bottom: 1px solid #edf2f7;
+
+        &:hover {
+          background-color: #f1f5f9;
+        }
+
+        td {
+          padding: 1.25rem;
+          color: #334155;
+          vertical-align: middle;
+          font-size: 0.95rem;
+        }
+      }
+    }
+
+    // Custom Cell Styles
+    .id-badge {
+      background: #f1f5f9;
+      padding: 0.25rem 0.5rem;
+      border-radius: 6px;
+      font-family: monospace;
+      font-weight: 600;
+      color: #475569;
+    }
+
+    .brand-info {
+      display: flex;
+      flex-direction: column;
+      .brand-name {
+        font-weight: 600;
+        color: #1e293b;
+      }
+      .plane-type {
+        font-size: 0.8rem;
+        color: #94a3b8;
+      }
+    }
+
+    .time-cell {
+      font-weight: 600;
+      color: var(--color-primary-blue, #2563eb);
+    }
+
+    .status-pill {
+      padding: 0.35rem 0.75rem;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+
+      &.status-yes {
+        background-color: #dcfce7;
+        color: #166534;
+      }
+
+      &.status-no {
+        background-color: #fee2e2;
+        color: #991b1b;
+      }
+    }
+  }
+
+  .text-center {
+    text-align: center;
+  }
+}
+
+/* Responsive optimization remains similar but with cleaner spacing */
+@media (max-width: 1024px) {
+  .modern-table {
+    display: block;
+    overflow-x: auto; // Allows horizontal scroll on tablets instead of breaking the layout too early
+  }
+}

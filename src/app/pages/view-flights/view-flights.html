@@ -1,1 +1,49 @@
-<p>view-flights works!</p>
+<div class="flights-container">
+  <div class="header-section">
+    <h2>Flight Schedules</h2>
+    <p>Manage and monitor all upcoming flight logistics</p>
+  </div>
+
+  <div class="table-wrapper">
+    <table class="modern-table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Flight Details</th>
+          <th>Crew</th>
+          <th>Capacity</th>
+          <th>Food Pref.</th>
+          <th>Dep. Date</th>
+          <th>Dep. Time</th>
+          <th>Arrival</th>
+          <th class="text-center">Catering</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr *ngFor="let flight of flights">
+          <td class="id-column">
+            <span class="id-badge">#{{ flight.id }}</span>
+          </td>
+          <td>
+            <div class="brand-info">
+              <span class="brand-name">{{ flight.brand }}</span>
+              <span class="plane-type">{{ flight.planeType }}</span>
+            </div>
+          </td>
+          <td>{{ flight.crewCount }}</td>
+          <td>{{ flight.seats }} <small>seats</small></td>
+          <td>{{ flight.preferredFood }}</td>
+          <td>{{ flight.departureDate }}</td>
+          <td class="time-cell">{{ flight.departureTime }}</td>
+          <td>{{ flight.arrivalDate }}</td>
+          <td class="text-center">
+            <span class="status-pill" [ngClass]="flight.foodRequested ? 'status-yes' : 'status-no'">
+              {{ flight.foodRequested ? 'Requested' : 'Not Set' }}
+            </span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
