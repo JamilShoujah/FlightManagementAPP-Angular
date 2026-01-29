@@ -16,6 +16,23 @@ export class ViewFlights implements OnInit {
   isModalOpen = false;
   flightForm: FormGroup;
   today: Date = new Date();
+
+  airlines: string[] = [
+    'MEA',
+    'Turkish Airlines',
+    'Emirates',
+    'Qatar Airways',
+    'Lufthansa',
+    'British Airways',
+    'Air France',
+    'Singapore Airlines',
+    'Delta Airlines',
+    'Etihad Airways',
+  ];
+  foodOptions: string[] = ['Mixed', 'Meat', 'Chicken', 'Fish', 'Vegetable', 'Vegan'];
+
+  hideDeparted: boolean = false;
+  systemDateStr: string = '';
   minDepartureDate: string = '';
 
   constructor(
@@ -28,10 +45,10 @@ export class ViewFlights implements OnInit {
       crewCount: [null, [Validators.required, Validators.min(1)]],
       seats: [null, [Validators.required, Validators.min(1)]],
       preferredFood: ['', Validators.required],
+      arrivalDate: ['', Validators.required],
       departureDate: ['', Validators.required],
       departureTime: ['', Validators.required],
-      arrivalDate: ['', Validators.required],
-      foodRequested: [{ value: false, disabled: false }],
+      foodRequested: [{ value: false, disabled: true }],
     });
   }
 
@@ -41,13 +58,57 @@ export class ViewFlights implements OnInit {
       this.flights = data;
       this.sortFlights();
     });
-
-    this.minDepartureDate = new Date().toISOString().split('T')[0];
     setInterval(() => this.updateSystemTime(), 60000);
   }
 
   updateSystemTime() {
     this.today = new Date();
+    this.systemDateStr = this.today.toISOString().split('T')[0];
+  }
+
+  get filteredFlights(): Flight[] {
+    return this.hideDeparted ? this.flights.filter((f) => !this.isDeparted(f)) : this.flights;
+  }
+
+  isDeparted(flight: Flight): boolean {
+    const departure = new Date(`${flight.departureDate}T${flight.departureTime}`);
+    return departure < this.today;
+  }
+
+  toggleHideDeparted() {
+    this.hideDeparted = !this.hideDeparted;
+  }
+
+  onDateChange() {
+    const arrival = this.flightForm.get('arrivalDate')?.value;
+    const departureControl = this.flightForm.get('departureDate');
+    if (arrival) {
+      this.minDepartureDate = arrival > this.systemDateStr ? arrival : this.systemDateStr;
+      if (departureControl?.value && departureControl.value < this.minDepartureDate) {
+        departureControl.setValue(this.minDepartureDate);
+      }
+    }
+    this.checkFoodEligibility();
+  }
+
+  checkFoodEligibility() {
+    const dDate = this.flightForm.get('departureDate')?.value;
+    const dTime = this.flightForm.get('departureTime')?.value;
+    const foodControl = this.flightForm.get('foodRequested');
+
+    if (dDate && dTime) {
+      const departure = new Date(`${dDate}T${dTime}`);
+      if (departure < this.today) {
+        this.flightForm.get('departureTime')?.setErrors({ past: true });
+      }
+      const limit = new Date(this.today.getTime() + 24 * 60 * 60 * 1000);
+      if (departure < limit) {
+        foodControl?.setValue(false);
+        foodControl?.disable();
+      } else {
+        foodControl?.enable();
+      }
+    }
   }
 
   private sortFlights() {
@@ -58,40 +119,9 @@ export class ViewFlights implements OnInit {
     });
   }
 
-  checkFoodEligibility() {
-    const dDate = this.flightForm.get('departureDate')?.value;
-    const dTime = this.flightForm.get('departureTime')?.value;
-
-    if (dDate && dTime) {
-      const departure = new Date(`${dDate}T${dTime}`);
-      const limit = new Date(this.today.getTime() + 24 * 60 * 60 * 1000);
-      const foodControl = this.flightForm.get('foodRequested');
-
-      if (departure < limit) {
-        foodControl?.setValue(false);
-        foodControl?.disable();
-      } else {
-        foodControl?.enable();
-      }
-    }
-  }
-
   onSubmit() {
     if (this.flightForm.invalid) return;
-
-    const arrival = new Date(this.flightForm.value.arrivalDate);
-    const departureDay = new Date(this.flightForm.value.departureDate);
-
-    if (arrival < departureDay) {
-      alert('Error: Arrival date cannot be earlier than the departure date.');
-      return;
-    }
-
-    const newFlight: Flight = {
-      ...this.flightForm.getRawValue(),
-      id: this.flights.length > 0 ? Math.max(...this.flights.map((f) => f.id)) + 1 : 1,
-    };
-
+    const newFlight: Flight = { ...this.flightForm.getRawValue(), id: Date.now() };
     this.flightService.addFlight(newFlight);
     this.sortFlights();
     this.closeModal();
@@ -99,9 +129,10 @@ export class ViewFlights implements OnInit {
 
   openModal() {
     this.isModalOpen = true;
+    this.minDepartureDate = this.systemDateStr;
   }
   closeModal() {
     this.isModalOpen = false;
-    this.flightForm.reset({ foodRequested: false });
+    this.flightForm.reset({ brand: '', preferredFood: '', foodRequested: false });
   }
 }

@@ -279,3 +279,390 @@
     transform: translateY(0);
   }
 }
+/* ... Keep existing styles from previous code ... */
+
+.id-column {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+}
+
+.departed-tag {
+  background: #64748b;
+  color: #ffffff;
+  font-size: 0.6rem;
+  font-weight: 800;
+  padding: 2px 6px;
+  border-radius: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.row-departed {
+  opacity: 0.6;
+  background-color: #f8fafc;
+
+  .time-cell {
+    color: #64748b !important; // Fade the blue time for departed flights
+  }
+
+  .status-pill {
+    filter: grayscale(0.5); // Dull the catering status for old flights
+  }
+}
+
+/* Ensure the modal inputs look clean */
+.modal-form .form-row {
+  margin-bottom: 0.5rem;
+}
+
+/* Add to your existing SCSS */
+.error-text {
+  color: #e11d48;
+  font-size: 0.7rem;
+  font-weight: 600;
+  margin-top: 4px;
+}
+
+input.ng-invalid.ng-touched {
+  border-color: #e11d48;
+}
+
+/* Add these new rules to your existing SCSS */
+
+.id-column {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.departed-tag {
+  background: #64748b;
+  color: #fff;
+  font-size: 0.6rem;
+  font-weight: 800;
+  padding: 2px 6px;
+  border-radius: 4px;
+  text-transform: uppercase;
+}
+
+.row-departed {
+  opacity: 0.6;
+  background-color: #f8fafc;
+  .time-cell {
+    color: #64748b !important;
+  }
+}
+
+.error-text {
+  color: #e11d48;
+  font-size: 0.7rem;
+  font-weight: 700;
+  margin-top: 4px;
+}
+
+.disabled-opacity {
+  opacity: 0.5;
+  filter: grayscale(1);
+}
+
+/* Controls & Toggle */
+.controls-group {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.filter-toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  cursor: pointer;
+  padding: 0.6rem 1.2rem;
+  border-radius: 50px;
+  background: #f1f5f9;
+  transition: all 0.2s ease;
+  user-select: none;
+
+  span {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #64748b;
+  }
+
+  .switch {
+    width: 34px;
+    height: 18px;
+    background: #cbd5e1;
+    border-radius: 20px;
+    position: relative;
+    &::after {
+      content: '';
+      position: absolute;
+      width: 12px;
+      height: 12px;
+      background: white;
+      border-radius: 50%;
+      top: 3px;
+      left: 3px;
+      transition: 0.3s;
+    }
+  }
+
+  &.active {
+    background: #eff6ff;
+    span {
+      color: #2563eb;
+    }
+    .switch {
+      background: #2563eb;
+      &::after {
+        left: 19px;
+      }
+    }
+  }
+}
+
+/* Table Statuses */
+.id-column {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.departed-tag {
+  background: #64748b;
+  color: #fff;
+  font-size: 0.6rem;
+  font-weight: 800;
+  padding: 2px 6px;
+  border-radius: 4px;
+  width: fit-content;
+  text-transform: uppercase;
+}
+
+.row-departed {
+  opacity: 0.65;
+  background-color: #f8fafc;
+  .time-cell {
+    color: #64748b !important;
+  }
+}
+
+.error-text {
+  color: #e11d48;
+  font-size: 0.75rem;
+  font-weight: 600;
+  margin-top: 4px;
+}
+
+/* ... keep previous styles ... */
+
+.modal-card {
+  select {
+    padding: 0.75rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    background: white;
+    outline-color: #2563eb;
+    cursor: pointer;
+
+    &:disabled {
+      background: #f8fafc;
+      cursor: not-allowed;
+    }
+  }
+}
+
+.controls-group {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+/* Rest of the styles from previous responses (filter-toggle, table, etc) */
+
+// Custom Select Styling
+.select-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+
+  select {
+    width: 100%;
+    padding: 0.75rem 2.5rem 0.75rem 1rem;
+    appearance: none; // Remove default arrow
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    color: #1e293b;
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    &:focus {
+      outline: none;
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+  }
+
+  // Custom Chevron Arrow
+  &::after {
+    content: '';
+    position: absolute;
+    right: 1rem;
+    width: 0.8rem;
+    height: 0.5rem;
+    background-color: #64748b;
+    clip-path: polygon(100% 0%, 0 0%, 50% 100%); // Creates a triangle
+    pointer-events: none;
+  }
+}
+
+// Modal Card Refinement
+.modal-card {
+  max-width: 550px;
+  border-radius: 16px;
+  box-shadow:
+    0 20px 25px -5px rgba(0, 0, 0, 0.1),
+    0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+.modal-header {
+  padding: 1.5rem;
+  border-bottom: 1px solid #f1f5f9;
+  h3 {
+    margin: 0;
+    font-size: 1.25rem;
+    color: #0f172a;
+  }
+  p {
+    margin: 4px 0 0;
+    font-size: 0.875rem;
+    color: #64748b;
+  }
+}
+
+.modal-body {
+  padding: 1.5rem;
+  max-height: 60vh;
+  overflow-y: auto;
+}
+
+// Catering Notice
+.catering-notice-box {
+  margin-top: 1rem;
+  padding: 1rem;
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  border-radius: 12px;
+  transition: opacity 0.3s;
+
+  &.disabled-box {
+    background: #f8fafc;
+    border-color: #e2e8f0;
+    .checkbox-text p {
+      color: #94a3b8;
+    }
+  }
+
+  .checkbox-group {
+    display: flex;
+    gap: 1rem;
+    align-items: flex-start;
+    input[type='checkbox'] {
+      width: 18px;
+      height: 18px;
+      margin-top: 2px;
+    }
+  }
+
+  .checkbox-text {
+    label {
+      font-weight: 700;
+      color: #1e293b;
+      margin: 0;
+    }
+    p {
+      margin: 2px 0 0;
+      font-size: 0.8rem;
+      color: #166534;
+    }
+  }
+}
+
+.modal-footer {
+  padding: 1.25rem 1.5rem;
+  background: #f8fafc;
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  border-bottom-left-radius: 16px;
+  border-bottom-right-radius: 16px;
+}
+
+.modern-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0 8px;
+
+  tr {
+    background: white;
+    transition: all 0.2s ease;
+
+    td {
+      padding: 1.25rem 1rem;
+      border-top: 1px solid #f1f5f9;
+      border-bottom: 1px solid #f1f5f9;
+      &:first-child {
+        border-left: 1px solid #f1f5f9;
+        border-top-left-radius: 12px;
+        border-bottom-left-radius: 12px;
+      }
+      &:last-child {
+        border-right: 1px solid #f1f5f9;
+        border-top-right-radius: 12px;
+        border-bottom-right-radius: 12px;
+      }
+    }
+  }
+
+  // The Departed Row Style
+  .departed-row {
+    background: #f8fafc;
+    opacity: 0.6;
+    filter: grayscale(0.5);
+
+    .brand-name {
+      color: #64748b;
+      text-decoration: line-through;
+    }
+    .status-pill {
+      background: #e2e8f0;
+      color: #94a3b8;
+    }
+    .date-cell,
+    .time-cell {
+      color: #94a3b8;
+    }
+  }
+}
+
+.brand-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.departed-label {
+  font-size: 0.65rem;
+  font-weight: 800;
+  color: #fff;
+  background: #94a3b8;
+  padding: 2px 6px;
+  border-radius: 4px;
+  width: fit-content;
+  text-transform: uppercase;
+}
