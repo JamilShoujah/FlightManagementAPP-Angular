@@ -189,3 +189,77 @@
     }
   }
 }
+
+/* Inside view-flights.scss */
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+
+  .modal-card {
+    background: #fff;
+    padding: 2rem;
+    border-radius: 16px;
+    width: 100%;
+    max-width: 500px;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+
+    h3 {
+      margin: 0 0 1rem 0;
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #1e293b;
+    }
+
+    .modal-form {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+
+      label {
+        font-weight: 600;
+        color: #475569;
+      }
+
+      input,
+      select {
+        padding: 0.5rem 1rem;
+        border-radius: 12px;
+        border: 1px solid #cbd5e1;
+        font-size: 0.95rem;
+      }
+
+      .modal-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 1rem;
+        margin-top: 1rem;
+
+        button {
+          padding: 0.5rem 1rem;
+          border-radius: 12px;
+          font-weight: 600;
+          cursor: pointer;
+          border: none;
+        }
+
+        button[type='submit'] {
+          background: #2563eb;
+          color: #fff;
+        }
+
+        button[type='button'] {
+          background: #e5e7eb;
+          color: #334155;
+        }
+      }
+    }
+  }
+}

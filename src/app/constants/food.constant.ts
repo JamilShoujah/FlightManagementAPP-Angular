@@ -3,7 +3,7 @@
 export interface FoodOption {
   id: number;
   name: string;
-  type: 'Beef' | 'Chicken' | 'Fish' | 'Vegetarian' | 'Vegan';
+  type: 'Beef' | 'Chicken' | 'Fish' | 'Vegetarian' | 'Vegan' | 'Any';
   tags?: ('Halal' | 'Gluten-Free')[];
 }
 

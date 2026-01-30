@@ -1,5 +1,3 @@
-<!-- src/app/pages/view-flights/view-flights.html -->
-
 <div class="flights-container">
   <button class="back-link" (click)="goBack()">Back to Home</button>
 
@@ -60,4 +58,70 @@
   </div>
 
   <button class="fab-button" (click)="openModal()">➕</button>
+</div>
+
+<!-- Modal -->
+<div class="modal-overlay" *ngIf="isModalOpen">
+  <div class="modal-card">
+    <h3>➕ Add New Flight</h3>
+
+    <form [formGroup]="flightForm" (ngSubmit)="onSubmit()" class="modal-form">
+      <label>Airline</label>
+      <select formControlName="brand" required>
+        <option value="">Select Airline</option>
+        <option *ngFor="let airline of airlines" [value]="airline">{{ airline }}</option>
+      </select>
+
+      <label>Plane Type</label>
+      <input type="text" formControlName="planeType" placeholder="Boeing 737" required />
+
+      <label>Crew Count</label>
+      <input type="number" formControlName="crewCount" min="1" required />
+
+      <label>Seats</label>
+      <input type="number" formControlName="seats" min="1" required />
+
+      <!-- Food Requested Checkbox -->
+      <div class="form-group">
+        <label>
+          <input type="checkbox" formControlName="foodRequested" (change)="onFoodToggle()" />
+          🍽️ Food Requested
+        </label>
+      </div>
+
+      <!-- Preferred Food Type -->
+      <div class="form-group" *ngIf="flightForm.get('foodRequested')?.value">
+        <label>Preferred Food Type</label>
+        <select formControlName="preferredFood">
+          <option value="" disabled>Select food type</option>
+          <option *ngFor="let type of foodTypes" [value]="type">{{ type }}</option>
+        </select>
+      </div>
+
+      <label>Arrival Date (to local airport)</label>
+      <input type="date" formControlName="arrivalDate" (change)="onDateChange()" required />
+
+      <label>Departure Date (from local airport)</label>
+      <input
+        type="date"
+        formControlName="departureDate"
+        [min]="minDepartureDate"
+        (change)="onDateChange()"
+        required
+      />
+
+      <label>Departure Time (from local airport)</label>
+      <input
+        type="time"
+        formControlName="departureTime"
+        (change)="checkFoodEligibility()"
+        required
+      />
+
+      <div class="modal-actions">
+        <button type="button" (click)="closeModal()">❌ Cancel</button>
+        <button type="submit" [disabled]="flightForm.invalid">💾 Add Flight</button>
+      </div>
+    </form>
+  </div>
 </div>
