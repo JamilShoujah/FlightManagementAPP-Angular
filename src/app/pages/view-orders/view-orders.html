@@ -1,28 +1,24 @@
-<!-- src/app/pages/view-orders/view-orders.html -->
-
 <div class="orders-container">
   <button class="back-link" (click)="router.navigate(['/'])">← Back to Home</button>
 
   <!-- Tabs -->
   <div class="tabs">
     <button (click)="activeTab = 'upcoming'" [class.active]="activeTab === 'upcoming'">
-      🆕 Upcoming Orders
+      Upcoming Orders
     </button>
     <button (click)="activeTab = 'previous'" [class.active]="activeTab === 'previous'">
-      ✅ Completed Orders
+      Completed Orders
     </button>
   </div>
 
-  <!-- UPCOMING -->
+  <!-- UPCOMING ORDERS GRID -->
   <div *ngIf="activeTab === 'upcoming'" class="order-grid">
     <div *ngFor="let flight of upcomingOrders()" class="order-card">
-      <!-- Header -->
       <div class="header">
         <div class="flight-info">
           <span class="brand">{{ flight.brand }}</span>
-          <span class="plane">✈️ {{ flight.planeType }}</span>
+          <span class="plane">{{ flight.planeType }}</span>
         </div>
-
         <select
           class="status-select"
           [(ngModel)]="flight.orderInfo.status"
@@ -34,7 +30,6 @@
         </select>
       </div>
 
-      <!-- Items -->
       <div class="items">
         <div class="item" *ngFor="let item of flight.orderInfo.itemsRequested">
           <span>{{ getFoodName(item.foodId) }}</span>
@@ -42,16 +37,15 @@
         </div>
       </div>
 
-      <!-- Actions -->
       <div class="card-actions">
         <button class="secondary" (click)="selectFlight(flight.id); showAddModal.set(true)">
-          ✏️ Edit Order
+          Edit Order
         </button>
       </div>
     </div>
   </div>
 
-  <!-- PREVIOUS -->
+  <!-- PREVIOUS ORDERS TABLE -->
   <div *ngIf="activeTab === 'previous'" class="history-table-wrapper">
     <table class="modern-table">
       <thead>
@@ -61,20 +55,17 @@
           <th>Items</th>
         </tr>
       </thead>
-
       <tbody>
         <tr *ngFor="let flight of previousOrders()">
           <td>
             <strong>{{ flight.brand }}</strong>
             <div class="sub">{{ flight.planeType }}</div>
           </td>
-
           <td>
-            <span class="status-pill" [ngClass]="flight.orderInfo.status.toLowerCase()">
-              {{ flight.orderInfo.status }}
-            </span>
+            <span class="status-pill" [ngClass]="flight.orderInfo.status.toLowerCase()">{{
+              flight.orderInfo.status
+            }}</span>
           </td>
-
           <td>
             <div class="history-item" *ngFor="let item of flight.orderInfo.itemsRequested">
               {{ getFoodName(item.foodId) }} × {{ item.quantity }}
@@ -88,16 +79,46 @@
   <!-- MODAL -->
   <div class="modal-overlay" *ngIf="showAddModal()">
     <div class="modal-card">
-      <h3>📝 Edit Order</h3>
+      <h3>Edit Order</h3>
 
-      <div class="food-row" *ngFor="let option of FOODOPTIONS">
+      <!-- Selected Food Type -->
+      <div class="food-type-info">
+        Food Type: <strong>{{ selectedFlight()?.preferredFood }}</strong>
+      </div>
+
+      <!-- Capacity info -->
+      <div class="capacity-info">
+        <div>
+          Capacity: <strong>{{ selectedFlight()?.seats }}</strong>
+        </div>
+        <div>
+          Ordered: <strong>{{ currentTotal() }}</strong>
+        </div>
+        <div [class.ok]="remainingSeats() >= 0" [class.warning]="remainingSeats() < 0">
+          Remaining: <strong>{{ remainingSeats() }}</strong>
+        </div>
+      </div>
+
+      <!-- Filtered food options -->
+      <div class="food-row" *ngFor="let option of filteredFoodOptions">
         <label>{{ option.name }}</label>
-        <input type="number" min="0" [(ngModel)]="orderQuantities[option.id]" />
+        <input
+          type="number"
+          min="0"
+          [(ngModel)]="orderQuantities[option.id]"
+          (ngModelChange)="recalculateTotals()"
+        />
       </div>
 
       <div class="modal-actions">
         <button class="ghost" (click)="showAddModal.set(false)">Cancel</button>
-        <button class="primary" (click)="saveOrder(selectedFlightId!)">Save Changes</button>
+        <button
+          class="primary"
+          [disabled]="remainingSeats() !== 0"
+          (click)="saveOrder(selectedFlightId!)"
+        >
+          Save Changes
+        </button>
       </div>
     </div>
   </div>
