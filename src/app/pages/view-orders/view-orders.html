@@ -3,6 +3,7 @@
 <div class="orders-container">
   <button class="back-link" (click)="router.navigate(['/'])">← Back to Home</button>
 
+  <!-- Tabs -->
   <div class="tabs">
     <button (click)="activeTab = 'upcoming'" [class.active]="activeTab === 'upcoming'">
       🆕 Upcoming Orders
@@ -12,28 +13,45 @@
     </button>
   </div>
 
+  <!-- UPCOMING -->
   <div *ngIf="activeTab === 'upcoming'" class="order-grid">
     <div *ngFor="let flight of upcomingOrders()" class="order-card">
+      <!-- Header -->
       <div class="header">
-        <span>{{ flight.brand }} ✈️ ({{ flight.planeType }})</span>
+        <div class="flight-info">
+          <span class="brand">{{ flight.brand }}</span>
+          <span class="plane">✈️ {{ flight.planeType }}</span>
+        </div>
+
         <select
+          class="status-select"
           [(ngModel)]="flight.orderInfo.status"
           (ngModelChange)="updateStatus(flight.id, $event)"
         >
-          <option value="PENDING">🕒 PENDING</option>
-          <option value="COMPLETE">✅ COMPLETE</option>
-          <option value="DELIVERED">📦 DELIVERED</option>
+          <option value="PENDING">PENDING</option>
+          <option value="COMPLETE">COMPLETE</option>
+          <option value="DELIVERED">DELIVERED</option>
         </select>
       </div>
+
+      <!-- Items -->
       <div class="items">
-        <div *ngFor="let item of flight.orderInfo.itemsRequested">
-          🍴 {{ getFoodName(item.foodId) }}: {{ item.quantity }}
+        <div class="item" *ngFor="let item of flight.orderInfo.itemsRequested">
+          <span>{{ getFoodName(item.foodId) }}</span>
+          <span class="qty">× {{ item.quantity }}</span>
         </div>
       </div>
-      <button (click)="selectFlight(flight.id); showAddModal.set(true)">✏️ Edit Order</button>
+
+      <!-- Actions -->
+      <div class="card-actions">
+        <button class="secondary" (click)="selectFlight(flight.id); showAddModal.set(true)">
+          ✏️ Edit Order
+        </button>
+      </div>
     </div>
   </div>
 
+  <!-- PREVIOUS -->
   <div *ngIf="activeTab === 'previous'" class="history-table-wrapper">
     <table class="modern-table">
       <thead>
@@ -43,17 +61,23 @@
           <th>Items</th>
         </tr>
       </thead>
+
       <tbody>
         <tr *ngFor="let flight of previousOrders()">
-          <td>{{ flight.brand }} ✈️ ({{ flight.planeType }})</td>
           <td>
-            <span class="status-pill" [ngClass]="flight.orderInfo.status.toLowerCase()">{{
-              flight.orderInfo.status
-            }}</span>
+            <strong>{{ flight.brand }}</strong>
+            <div class="sub">{{ flight.planeType }}</div>
           </td>
+
           <td>
-            <div *ngFor="let item of flight.orderInfo.itemsRequested">
-              🍽️ {{ getFoodName(item.foodId) }}: {{ item.quantity }}
+            <span class="status-pill" [ngClass]="flight.orderInfo.status.toLowerCase()">
+              {{ flight.orderInfo.status }}
+            </span>
+          </td>
+
+          <td>
+            <div class="history-item" *ngFor="let item of flight.orderInfo.itemsRequested">
+              {{ getFoodName(item.foodId) }} × {{ item.quantity }}
             </div>
           </td>
         </tr>
@@ -61,16 +85,19 @@
     </table>
   </div>
 
+  <!-- MODAL -->
   <div class="modal-overlay" *ngIf="showAddModal()">
     <div class="modal-card">
       <h3>📝 Edit Order</h3>
-      <div *ngFor="let option of FOODOPTIONS">
-        <label>{{ option.name }} ({{ option.type }})</label>
+
+      <div class="food-row" *ngFor="let option of FOODOPTIONS">
+        <label>{{ option.name }}</label>
         <input type="number" min="0" [(ngModel)]="orderQuantities[option.id]" />
       </div>
+
       <div class="modal-actions">
-        <button (click)="showAddModal.set(false)">❌ Cancel</button>
-        <button (click)="saveOrder(selectedFlightId!)">💾 Save</button>
+        <button class="ghost" (click)="showAddModal.set(false)">Cancel</button>
+        <button class="primary" (click)="saveOrder(selectedFlightId!)">Save Changes</button>
       </div>
     </div>
   </div>
