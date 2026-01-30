@@ -1,26 +1,22 @@
+<!-- src/app/pages/view-flights/view-flights.html -->
+
 <div class="flights-container">
-  <button class="back-link" (click)="goBack()">
-    <span class="arrow"></span>
-    Back to Home
-  </button>
+  <button class="back-link" (click)="goBack()">Back to Home</button>
 
   <header class="header-section">
-    <div class="header-top">
-      <div class="title-group">
-        <h2>Ground Logistics & Catering</h2>
-        <p>Monitoring {{ filteredFlights.length }} active turnarounds</p>
-      </div>
+    <div>
+      <h2>🛬 Ground Logistics & Catering</h2>
+      <p>{{ filteredFlights.length }} active turnarounds</p>
+    </div>
 
-      <div class="controls-group">
-        <div class="filter-toggle" (click)="toggleHideDeparted()" [class.active]="hideDeparted">
-          <div class="switch"></div>
-          <span>Hide Departed</span>
-        </div>
-        <div class="date-display">
-          <span class="label">System Date</span>
-          <span class="value">{{ today | date: 'fullDate' }}</span>
-          <span class="time">{{ today | date: 'shortTime' }}</span>
-        </div>
+    <div class="controls-group">
+      <div class="filter-toggle" (click)="toggleHideDeparted()" [class.active]="hideDeparted">
+        Hide Departed
+      </div>
+      <div class="date-display">
+        <span class="label">System Date</span>
+        <span class="value">{{ today | date: 'fullDate' }}</span>
+        <span class="time">{{ today | date: 'shortTime' }}</span>
       </div>
     </div>
   </header>
@@ -32,138 +28,36 @@
           <th>Airliner</th>
           <th>Plane Type</th>
           <th>Crew</th>
-          <th>Capacity</th>
+          <th>Seats</th>
           <th>Arrival</th>
           <th>Departure</th>
           <th>Time</th>
-          <th class="text-center">Catering</th>
+          <th>Catering</th>
         </tr>
       </thead>
       <tbody>
         <tr *ngFor="let flight of filteredFlights" [class.row-departed]="isDeparted(flight)">
           <td>
-            <div class="brand-info">
-              <span class="brand-name">{{ flight.brand }}</span>
+            <div class="brand-cell">
+              <span class="brand-name">{{ flight.brand }} ✈️</span>
               <div *ngIf="isDeparted(flight)" class="departed-tag">Departed</div>
             </div>
           </td>
           <td>{{ flight.planeType }}</td>
           <td>{{ flight.crewCount }}</td>
-          <td>{{ flight.seats }} <small>seats</small></td>
+          <td>{{ flight.seats }}</td>
           <td>{{ flight.arrivalDate }}</td>
-          <td class="highlight-cell">{{ flight.departureDate }}</td>
-          <td class="time-cell">{{ flight.departureTime }}</td>
-          <td class="text-center">
+          <td>{{ flight.departureDate }}</td>
+          <td>{{ flight.departureTime }}</td>
+          <td>
             <span class="status-pill" [ngClass]="flight.foodRequested ? 'status-yes' : 'status-no'">
-              {{ flight.foodRequested ? 'Requested' : 'No Service' }}
+              {{ flight.foodRequested ? '🥗 Requested' : '❌ No Service' }}
             </span>
           </td>
         </tr>
       </tbody>
     </table>
   </div>
-</div>
 
-<button class="fab-button" (click)="openModal()">
-  <span class="plus-icon">+</span>
-</button>
-
-<div class="modal-overlay" *ngIf="isModalOpen" (click)="closeModal()">
-  <div class="modal-card" (click)="$event.stopPropagation()">
-    <div class="modal-header">
-      <div class="header-text">
-        <h3>Register New Turnaround</h3>
-        <p>Fill in the details to schedule the ground handling.</p>
-      </div>
-      <button class="close-btn" (click)="closeModal()">&times;</button>
-    </div>
-
-    <form [formGroup]="flightForm" (ngSubmit)="onSubmit()" class="modal-form">
-      <div class="modal-body">
-        <div class="form-row">
-          <div class="form-group">
-            <label>Airline Brand</label>
-            <div class="select-wrapper">
-              <select formControlName="brand">
-                <option value="" disabled selected>Select Airline</option>
-                <option *ngFor="let airline of airlines" [value]="airline">{{ airline }}</option>
-              </select>
-            </div>
-          </div>
-          <div class="form-group">
-            <label>Plane Type</label>
-            <input type="text" formControlName="planeType" placeholder="e.g. A321 Neo" />
-          </div>
-        </div>
-
-        <div class="form-group">
-          <label>Arrival Date (Landing)</label>
-          <input type="date" formControlName="arrivalDate" (change)="onDateChange()" />
-        </div>
-
-        <div class="form-row">
-          <div class="form-group">
-            <label>Departure Date (Takeoff)</label>
-            <input
-              type="date"
-              formControlName="departureDate"
-              [min]="minDepartureDate"
-              (change)="checkFoodEligibility()"
-            />
-          </div>
-          <div class="form-group">
-            <label>Departure Time</label>
-            <input type="time" formControlName="departureTime" (change)="checkFoodEligibility()" />
-            <small class="error-text" *ngIf="flightForm.get('departureTime')?.hasError('past')"
-              >Time has already passed</small
-            >
-          </div>
-        </div>
-
-        <div class="form-row">
-          <div class="form-group">
-            <label>Crew Count</label>
-            <input type="number" formControlName="crewCount" placeholder="0" />
-          </div>
-          <div class="form-group">
-            <label>Total Seats</label>
-            <input type="number" formControlName="seats" placeholder="0" />
-          </div>
-        </div>
-
-        <div class="form-group">
-          <label>Preferred Food Service</label>
-          <div class="select-wrapper">
-            <select formControlName="preferredFood">
-              <option value="" disabled selected>Select Menu Type</option>
-              <option *ngFor="let food of foodOptions" [value]="food">{{ food }}</option>
-            </select>
-          </div>
-        </div>
-
-        <div
-          class="catering-notice-box"
-          [class.disabled-box]="flightForm.get('foodRequested')?.disabled"
-        >
-          <div class="checkbox-group">
-            <input type="checkbox" id="foodReq" formControlName="foodRequested" />
-            <div class="checkbox-text">
-              <label for="foodReq">Catering Service Requested</label>
-              <p *ngIf="flightForm.get('foodRequested')?.disabled">
-                Notice: Service requires 24h lead time.
-              </p>
-              <p *ngIf="!flightForm.get('foodRequested')?.disabled">Service is available.</p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="modal-footer">
-        <button type="button" class="btn-cancel" (click)="closeModal()">Cancel</button>
-        <button type="submit" class="btn-submit" [disabled]="flightForm.invalid">
-          Register Flight
-        </button>
-      </div>
-    </form>
-  </div>
+  <button class="fab-button" (click)="openModal()">➕</button>
 </div>

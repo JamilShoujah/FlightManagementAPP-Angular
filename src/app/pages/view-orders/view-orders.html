@@ -1,39 +1,39 @@
+<!-- src/app/pages/view-orders/view-orders.html -->
+
 <div class="orders-container">
   <button class="back-link" (click)="router.navigate(['/'])">← Back to Home</button>
 
   <div class="tabs">
     <button (click)="activeTab = 'upcoming'" [class.active]="activeTab === 'upcoming'">
-      Upcoming Orders
+      🆕 Upcoming Orders
     </button>
     <button (click)="activeTab = 'previous'" [class.active]="activeTab === 'previous'">
-      Completed Orders
+      ✅ Completed Orders
     </button>
   </div>
 
-  <!-- Upcoming Orders Grid -->
   <div *ngIf="activeTab === 'upcoming'" class="order-grid">
     <div *ngFor="let flight of upcomingOrders()" class="order-card">
       <div class="header">
-        <span>{{ flight.brand }} ({{ flight.planeType }})</span>
+        <span>{{ flight.brand }} ✈️ ({{ flight.planeType }})</span>
         <select
           [(ngModel)]="flight.orderInfo.status"
           (ngModelChange)="updateStatus(flight.id, $event)"
         >
-          <option value="PENDING">PENDING</option>
-          <option value="COMPLETE">COMPLETE</option>
-          <option value="DELIVERED">DELIVERED</option>
+          <option value="PENDING">🕒 PENDING</option>
+          <option value="COMPLETE">✅ COMPLETE</option>
+          <option value="DELIVERED">📦 DELIVERED</option>
         </select>
       </div>
       <div class="items">
         <div *ngFor="let item of flight.orderInfo.itemsRequested">
-          {{ getFoodName(item.foodId) }}: {{ item.quantity }}
+          🍴 {{ getFoodName(item.foodId) }}: {{ item.quantity }}
         </div>
       </div>
-      <button (click)="selectFlight(flight.id); showAddModal.set(true)">Edit Order</button>
+      <button (click)="selectFlight(flight.id); showAddModal.set(true)">✏️ Edit Order</button>
     </div>
   </div>
 
-  <!-- Previous Orders Table -->
   <div *ngIf="activeTab === 'previous'" class="history-table-wrapper">
     <table class="modern-table">
       <thead>
@@ -45,15 +45,15 @@
       </thead>
       <tbody>
         <tr *ngFor="let flight of previousOrders()">
-          <td>{{ flight.brand }} ({{ flight.planeType }})</td>
+          <td>{{ flight.brand }} ✈️ ({{ flight.planeType }})</td>
           <td>
-            <span class="status-pill" [ngClass]="flight.orderInfo.status.toLowerCase()">
-              {{ flight.orderInfo.status }}
-            </span>
+            <span class="status-pill" [ngClass]="flight.orderInfo.status.toLowerCase()">{{
+              flight.orderInfo.status
+            }}</span>
           </td>
           <td>
             <div *ngFor="let item of flight.orderInfo.itemsRequested">
-              {{ getFoodName(item.foodId) }}: {{ item.quantity }}
+              🍽️ {{ getFoodName(item.foodId) }}: {{ item.quantity }}
             </div>
           </td>
         </tr>
@@ -61,17 +61,16 @@
     </table>
   </div>
 
-  <!-- Edit/Add Modal -->
   <div class="modal-overlay" *ngIf="showAddModal()">
     <div class="modal-card">
-      <h3>Edit Order</h3>
+      <h3>📝 Edit Order</h3>
       <div *ngFor="let option of FOODOPTIONS">
         <label>{{ option.name }} ({{ option.type }})</label>
         <input type="number" min="0" [(ngModel)]="orderQuantities[option.id]" />
       </div>
       <div class="modal-actions">
-        <button (click)="showAddModal.set(false)">Cancel</button>
-        <button (click)="saveOrder(selectedFlightId!)">Save</button>
+        <button (click)="showAddModal.set(false)">❌ Cancel</button>
+        <button (click)="saveOrder(selectedFlightId!)">💾 Save</button>
       </div>
     </div>
   </div>
