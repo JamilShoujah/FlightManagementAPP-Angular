@@ -4,6 +4,8 @@ import { Router } from '@angular/router';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Flight } from '../../models/flights.model';
 import { FlightService } from '../../services/flights.service';
+import { AIRLINES } from '../../constants/brand.constant';
+import { FOODOPTIONS } from '../../constants/food.constant';
 
 @Component({
   selector: 'app-view-flights',
@@ -17,26 +19,13 @@ export class ViewFlights implements OnInit {
   isModalOpen = false;
   flightForm: FormGroup;
   today: Date = new Date();
+  airlines = AIRLINES;
+  foodOptions = FOODOPTIONS;
 
   // Settings & Dropdowns
   hideDeparted: boolean = false;
   systemDateStr: string = '';
   minDepartureDate: string = '';
-
-  airlines: string[] = [
-    'MEA',
-    'Turkish Airlines',
-    'Emirates',
-    'Qatar Airways',
-    'Lufthansa',
-    'British Airways',
-    'Air France',
-    'Singapore Airlines',
-    'Delta Airlines',
-    'Etihad Airways',
-  ];
-
-  foodOptions: string[] = ['Mixed', 'Meat', 'Chicken', 'Fish', 'Vegetable', 'Vegan'];
 
   constructor(
     private flightService: FlightService,
