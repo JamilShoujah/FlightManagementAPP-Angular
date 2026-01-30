@@ -1,10 +1,14 @@
-export type OrderStatus = 'PENDING' | 'COMPLETE' | 'NOT_ACCEPTED';
+// src/app/models/order.models.ts
+export type OrderStatus = 'PENDING' | 'COMPLETE' | 'DELIVERED';
+
+export interface OrderedFoodItem {
+  foodId: number;
+  quantity: number;
+}
 
 export interface FlightOrder {
-  id: number;
-  flightNumber: string;
-  orderDate: Date;
-  dueDate: Date;
+  flightId: number; // Links to Flight.id
   status: OrderStatus;
-  items: string;
+  itemsRequested: OrderedFoodItem[];
+  lastUpdated: Date;
 }

@@ -1,4 +1,4 @@
-// models/flight.model.ts
+// src / app / models / flights.model.ts;
 export interface Flight {
   id: number;
   brand: string;

@@ -1,5 +1,4 @@
-// src/app/constants/flights.constant.ts
-
+// src / app / constants / flights.constant.ts;
 import { Flight } from '../models/flights.model';
 
 export const FLIGHTS: Flight[] = [
