@@ -1,1 +1,134 @@
-<p>view-orders works!</p>
+<div class="orders-container">
+  <button class="back-link" (click)="router.navigate(['/'])">Back to Home</button>
+
+  <!-- Tabs -->
+  <div class="tabs">
+    <button (click)="activeTab = 'upcoming'" [class.active]="activeTab === 'upcoming'">
+      Upcoming Orders
+    </button>
+    <button (click)="activeTab = 'previous'" [class.active]="activeTab === 'previous'">
+      Completed Orders
+    </button>
+  </div>
+
+  <!-- UPCOMING ORDERS GRID -->
+  <div *ngIf="activeTab === 'upcoming'" class="order-grid">
+    <div *ngFor="let flight of upcomingOrders()" class="order-card">
+      <div class="header">
+        <div class="flight-info">
+          <span class="brand">{{ flight.brand }}</span>
+          <span class="plane">{{ flight.planeType }}</span>
+        </div>
+        <select
+          class="status-select"
+          [(ngModel)]="flight.orderInfo.status"
+          (ngModelChange)="updateStatus(flight.id, $event)"
+        >
+          <option value="PENDING">PENDING</option>
+          <option value="COMPLETE">COMPLETE</option>
+        </select>
+      </div>
+
+      <div class="items">
+        <div class="item" *ngFor="let item of flight.orderInfo.itemsRequested">
+          <span>{{ getFoodName(item.foodId) }}</span>
+          <span class="qty">× {{ item.quantity }}</span>
+        </div>
+      </div>
+
+      <div class="card-actions">
+        <button class="secondary" (click)="selectFlight(flight.id); showAddModal.set(true)">
+          Edit Order
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Previous Orders Table -->
+  <div *ngIf="activeTab === 'previous'" class="history-table-wrapper">
+    <table class="modern-table previous-orders-table">
+      <thead>
+        <tr>
+          <th>Flight</th>
+          <th>Status</th>
+          <th>Items</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr *ngFor="let flight of previousOrders()">
+          <!-- Flight Info -->
+          <td>
+            <div class="flight-info">
+              <strong>{{ flight.brand }}</strong>
+              <div class="plane-type">{{ flight.planeType }}</div>
+            </div>
+          </td>
+
+          <!-- Order Status -->
+          <td>
+            <span class="status-pill" [ngClass]="flight.orderInfo.status.toLowerCase()">
+              {{ flight.orderInfo.status }}
+            </span>
+          </td>
+
+          <!-- Items Requested -->
+          <td>
+            <div class="items-list">
+              <div class="history-item" *ngFor="let item of flight.orderInfo.itemsRequested">
+                {{ getFoodName(item.foodId) }} × {{ item.quantity }}
+              </div>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- MODAL -->
+  <div class="modal-overlay" *ngIf="showAddModal()">
+    <div class="modal-card">
+      <h3>Edit Order</h3>
+
+      <!-- Selected Food Type -->
+      <div class="food-type-info">
+        Food Type: <strong>{{ selectedFlight()?.preferredFood }}</strong>
+      </div>
+
+      <!-- Capacity info -->
+      <div class="capacity-info">
+        <div>
+          Capacity: <strong>{{ selectedFlight()?.seats }}</strong>
+        </div>
+        <div>
+          Ordered: <strong>{{ currentTotal() }}</strong>
+        </div>
+        <div [class.ok]="remainingSeats() >= 0" [class.warning]="remainingSeats() < 0">
+          Remaining: <strong>{{ remainingSeats() }}</strong>
+        </div>
+      </div>
+
+      <!-- Filtered food options -->
+      <div class="food-row" *ngFor="let option of filteredFoodOptions">
+        <label>{{ option.name }}</label>
+        <input
+          type="number"
+          min="0"
+          [(ngModel)]="orderQuantities[option.id]"
+          (ngModelChange)="recalculateTotals()"
+        />
+      </div>
+
+      <div class="modal-actions">
+        <button class="ghost" (click)="showAddModal.set(false)">Cancel</button>
+        <button
+          class="primary"
+          [disabled]="remainingSeats() !== 0"
+          (click)="saveOrder(selectedFlightId!)"
+        >
+          Save Changes
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
