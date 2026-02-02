@@ -13,7 +13,7 @@ import { FOODOPTIONS } from '../../constants/food.constant';
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './view-flights.html',
-  styleUrls: ['./view-flights.scss'],
+  // styleUrls: ['./view-flights.scss'],
 })
 export class ViewFlights implements OnInit {
   flights: Flight[] = [];

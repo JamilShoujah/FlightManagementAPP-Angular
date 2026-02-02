@@ -1,5 +1,5 @@
 // src/app/models/order.models.ts
-export type OrderStatus = 'PENDING' | 'COMPLETE' | 'DELIVERED';
+export type OrderStatus = 'PENDING' | 'COMPLETE';
 
 export interface OrderedFoodItem {
   foodId: number;

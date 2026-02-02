@@ -32,7 +32,7 @@ export const ORDERS: FlightOrder[] = [
   // Existing orders
   {
     flightId: 1,
-    status: 'PENDING',
+    status: 'COMPLETE',
     itemsRequested: [
       { foodId: 7, quantity: 450 }, // Vegetarian
       { foodId: 9, quantity: 50 }, // Vegan

@@ -20,7 +20,7 @@
   </header>
 
   <div class="table-wrapper">
-    <table class="modern-table">
+    <table class="flights-table">
       <thead>
         <tr>
           <th>Airliner</th>
@@ -83,9 +83,15 @@
 
       <!-- Food Requested Checkbox -->
       <div class="form-group">
-        <label>
-          <input type="checkbox" formControlName="foodRequested" (change)="onFoodToggle()" />
-          🍽️ Food Requested
+        <label class="chunky-checkbox">
+          <input
+            type="checkbox"
+            id="foodRequested"
+            formControlName="foodRequested"
+            (change)="onFoodToggle()"
+          />
+          <span class="checkbox-box"></span>
+          <span class="checkbox-label">🍽️ Food Requested</span>
         </label>
       </div>
 

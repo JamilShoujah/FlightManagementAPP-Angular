@@ -15,7 +15,7 @@ import { FOODOPTIONS } from '../../constants/food.constant';
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './view-orders.html',
-  styleUrls: ['./view-orders.scss'],
+  // styleUrls: ['./view-orders.scss'],
 })
 export class ViewOrders implements OnInit {
   private flightService = inject(FlightService);
@@ -149,7 +149,7 @@ export class ViewOrders implements OnInit {
     this.processData(flights, orders);
 
     // Optionally switch tab if the order is now complete or delivered
-    if (status === 'COMPLETE' || status === 'DELIVERED') {
+    if (status === 'COMPLETE') {
       this.activeTab = 'previous';
     }
   }
