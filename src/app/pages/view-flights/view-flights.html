@@ -1,23 +1,12 @@
 <div class="flights-container">
   <button class="back-link" (click)="goBack()">Back to Home</button>
 
-  <header class="header-section">
-    <div>
-      <h2>🛬 Ground Logistics & Catering</h2>
-      <p>{{ filteredFlights.length }} active turnarounds</p>
-    </div>
-
-    <div class="controls-group">
-      <div class="filter-toggle" (click)="toggleHideDeparted()" [class.active]="hideDeparted">
-        Hide Departed
-      </div>
-      <div class="date-display">
-        <span class="label">System Date</span>
-        <span class="value">{{ today | date: 'fullDate' }}</span>
-        <span class="time">{{ today | date: 'shortTime' }}</span>
-      </div>
-    </div>
-  </header>
+  <app-flights-header
+    [today]="today"
+    [hideDeparted]="hideDeparted"
+    [filteredFlightsLength]="filteredFlights.length"
+    (toggleHideDepartedEvent)="toggleHideDeparted()"
+  ></app-flights-header>
 
   <div class="table-wrapper">
     <table class="flights-table">

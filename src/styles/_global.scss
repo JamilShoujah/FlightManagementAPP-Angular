@@ -1,0 +1,57 @@
+@use './variables' as *;
+@use './mixins' as *;
+
+// ==================== Global Styles ====================
+body {
+  font-family: $font-base;
+  background: $color-bg;
+  color: $color-text;
+  line-height: 1.5;
+}
+
+a {
+  color: $color-primary;
+  text-decoration: none;
+  transition: color 0.2s;
+
+  &:hover {
+    color: $color-primary-hover;
+  }
+}
+
+.text-center {
+  text-align: center;
+}
+.mt-1 {
+  margin-top: 0.25rem;
+}
+.mt-2 {
+  margin-top: 0.5rem;
+}
+.mb-1 {
+  margin-bottom: 0.25rem;
+}
+.mb-2 {
+  margin-bottom: 0.5rem;
+}
+
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  color: $color-primary;
+  background: none;
+  border: none;
+  font-size: 0.95rem;
+  text-decoration: none;
+
+  &::before {
+    content: '⬅️';
+  }
+  &:hover {
+    color: $color-primary-hover;
+  }
+}

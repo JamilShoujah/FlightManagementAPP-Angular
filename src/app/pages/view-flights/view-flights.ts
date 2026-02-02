@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, DatePipe } from '@angular/common';
 import { Router } from '@angular/router';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 
@@ -7,11 +7,12 @@ import { Flight } from '../../models/flights.model';
 import { FlightService } from '../../services/flights.service';
 import { AIRLINES } from '../../constants/brand.constant';
 import { FOODOPTIONS } from '../../constants/food.constant';
+import { FlightsHeader } from './header/flights-header/flights-header';
 
 @Component({
   selector: 'app-view-flights',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, FlightsHeader],
   templateUrl: './view-flights.html',
   // styleUrls: ['./view-flights.scss'],
 })
@@ -25,8 +26,6 @@ export class ViewFlights implements OnInit {
   minDepartureDate = '';
 
   airlines = AIRLINES;
-
-  // unique food types + Any
   foodTypes: string[] = [...Array.from(new Set(FOODOPTIONS.map((f) => f.type))), 'Any'];
 
   flightForm: FormGroup;
@@ -43,7 +42,7 @@ export class ViewFlights implements OnInit {
       seats: [null, [Validators.required, Validators.min(1)]],
 
       foodRequested: [false],
-      preferredFood: [{ value: '', disabled: true }], // ✅ FIXED (no validator here)
+      preferredFood: [{ value: '', disabled: true }],
 
       arrivalDate: ['', Validators.required],
       departureDate: ['', Validators.required],

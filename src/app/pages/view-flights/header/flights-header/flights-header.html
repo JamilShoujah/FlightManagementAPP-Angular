@@ -1,0 +1,14 @@
+<header class="header-section">
+  <div>
+    <h2>🛬 Ground Logistics & Catering</h2>
+    <p>{{ filteredFlightsLength }} active turnarounds</p>
+  </div>
+
+  <div class="controls-group">
+    <div class="filter-toggle" (click)="toggleHideDeparted()" [class.active]="hideDeparted">
+      Hide Departed
+    </div>
+
+    <app-date-display [date]="today"></app-date-display>
+  </div>
+</header>

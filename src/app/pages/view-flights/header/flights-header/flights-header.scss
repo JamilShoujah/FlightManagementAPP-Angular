@@ -1,0 +1,59 @@
+@use '../../../../../styles/mixins' as *;
+@use '../../../../../styles/variables' as *;
+
+.header-section {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  gap: 1rem;
+  padding: 0 0.5rem;
+
+  h2 {
+    font-size: 1.85rem;
+    font-weight: 700;
+    color: #1e293b;
+    margin: 0;
+  }
+
+  p {
+    margin: 0.25rem 0 0 0;
+    font-size: 0.95rem;
+    color: $color-text-light;
+  }
+
+  .controls-group {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+
+    .filter-toggle {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      padding: 0.5rem 1rem;
+      background: $color-muted;
+      border-radius: 50px;
+      font-weight: 600;
+      cursor: pointer;
+      color: $color-text-light;
+      transition: all 0.2s ease;
+
+      &:hover {
+        background: $color-muted-dark;
+        color: $color-text;
+      }
+
+      &.active {
+        background: $color-primary;
+        color: white;
+
+        &:hover {
+          background: $color-primary-hover;
+        }
+      }
+    }
+  }
+}
