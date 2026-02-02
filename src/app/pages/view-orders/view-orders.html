@@ -1,15 +1,7 @@
 <div class="orders-container">
-  <button class="back-link" (click)="router.navigate(['/'])">Back to Home</button>
+  <app-back-button></app-back-button>
 
-  <!-- Tabs -->
-  <div class="tabs">
-    <button (click)="activeTab = 'upcoming'" [class.active]="activeTab === 'upcoming'">
-      Upcoming Orders
-    </button>
-    <button (click)="activeTab = 'previous'" [class.active]="activeTab === 'previous'">
-      Completed Orders
-    </button>
-  </div>
+  <app-order-tabs [(activeTab)]="activeTab"> </app-order-tabs>
 
   <!-- UPCOMING ORDERS GRID -->
   <div *ngIf="activeTab === 'upcoming'" class="order-grid">

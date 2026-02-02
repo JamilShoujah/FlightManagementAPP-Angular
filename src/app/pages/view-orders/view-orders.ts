@@ -9,11 +9,13 @@ import { FlightService } from '../../services/flights.service';
 import { FlightOrder, OrderedFoodItem, OrderStatus } from '../../models/order.models';
 import { OrderService } from '../../services/orders.service';
 import { FOODOPTIONS } from '../../constants/food.constant';
+import { BackButton } from '../../components/back-button/back-button';
+import { TabsComponent } from './tabs/tabs';
 
 @Component({
   selector: 'app-view-orders',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, BackButton, TabsComponent],
   templateUrl: './view-orders.html',
   // styleUrls: ['./view-orders.scss'],
 })
