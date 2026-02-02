@@ -55,3 +55,78 @@ a {
     color: $color-primary-hover;
   }
 }
+
+// ==================== Modal (Global) ====================
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 9999;
+
+  .modal-card {
+    @include card($color-bg);
+    border-radius: 22px;
+    padding: 2rem;
+    width: 100%;
+    max-width: 500px;
+    gap: 1.25rem;
+
+    h3 {
+      margin: 0 0 1rem 0;
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #1e293b;
+    }
+
+    .modal-form {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+
+      label {
+        font-weight: 600;
+        color: $color-text-light;
+      }
+
+      input,
+      select {
+        padding: 0.5rem 1rem;
+        border-radius: 12px;
+        border: 1px solid $color-muted-dark;
+        font-size: 0.95rem;
+      }
+
+      .modal-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 1rem;
+        margin-top: 1rem;
+
+        button {
+          padding: 0.5rem 1rem;
+          border-radius: 12px;
+          font-weight: 600;
+          cursor: pointer;
+          border: none;
+        }
+        button[type='submit'] {
+          background: $color-primary;
+          color: white;
+
+          &:disabled {
+            background: $color-muted-dark; // grey background
+            color: $color-text-light; // lighter text
+            cursor: not-allowed;
+          }
+        }
+        button[type='button'] {
+          background: $color-muted;
+          color: $color-text;
+        }
+      }
+    }
+  }
+}

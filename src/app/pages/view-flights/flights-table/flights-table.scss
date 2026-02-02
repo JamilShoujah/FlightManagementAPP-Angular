@@ -1,0 +1,60 @@
+@use '../../../../styles/mixins' as *;
+@use '../../../../styles/variables' as *;
+
+.table-wrapper {
+  background: $color-card;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
+
+  .flights-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0 10px;
+
+    thead th {
+      background: $color-muted;
+      padding: 0.75rem 1rem;
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: $color-text-light;
+      text-transform: uppercase;
+      text-align: left;
+    }
+
+    tbody td {
+      background: $color-card;
+      padding: 0.75rem 1rem;
+      border-radius: 12px;
+      font-size: 0.9rem;
+      color: $color-text;
+    }
+
+    .status-pill {
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+
+      &.status-yes {
+        background: #dcfce7;
+        color: #15803d;
+      }
+      &.status-no {
+        background: #fee2e2;
+        color: #b91c1c;
+      }
+    }
+
+    .departed-tag {
+      background: #64748b;
+      color: white;
+      font-size: 0.65rem;
+      font-weight: 700;
+      padding: 2px 6px;
+      border-radius: 6px;
+      text-transform: uppercase;
+    }
+  }
+}

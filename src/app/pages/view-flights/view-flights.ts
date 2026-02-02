@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule, DatePipe } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 
@@ -8,11 +8,21 @@ import { FlightService } from '../../services/flights.service';
 import { AIRLINES } from '../../constants/brand.constant';
 import { FOODOPTIONS } from '../../constants/food.constant';
 import { FlightsHeader } from './header/flights-header/flights-header';
+import { BackButton } from '../../components/back-button/back-button';
+import { FlightsTableComponent } from './flights-table/flights-table';
+import { AddFlightModalComponent } from './add-flight-modal/add-flight-modal';
 
 @Component({
   selector: 'app-view-flights',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, FlightsHeader],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    FlightsHeader,
+    BackButton,
+    FlightsTableComponent,
+    AddFlightModalComponent,
+  ],
   templateUrl: './view-flights.html',
   // styleUrls: ['./view-flights.scss'],
 })
@@ -67,13 +77,6 @@ export class ViewFlights implements OnInit {
   updateSystemTime() {
     this.today = new Date();
     this.systemDateStr = this.today.toISOString().split('T')[0];
-  }
-
-  // =====================
-  // Navigation
-  // =====================
-  goBack() {
-    this.router.navigate(['/']);
   }
 
   // =====================
@@ -173,15 +176,8 @@ export class ViewFlights implements OnInit {
   // =====================
   // Submit
   // =====================
-  onSubmit() {
-    if (this.flightForm.invalid) return;
-
-    const newFlight: Flight = {
-      id: Date.now(),
-      ...this.flightForm.getRawValue(), // ✅ includes disabled preferredFood
-    };
-
-    this.flightService.addFlight(newFlight);
+  onSubmit(flight: Flight) {
+    this.flightService.addFlight(flight);
     this.sortFlights();
     this.closeModal();
   }

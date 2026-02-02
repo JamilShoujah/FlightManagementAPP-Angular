@@ -1,0 +1,37 @@
+<div class="table-wrapper">
+  <table class="flights-table">
+    <thead>
+      <tr>
+        <th>Airliner</th>
+        <th>Plane Type</th>
+        <th>Crew</th>
+        <th>Seats</th>
+        <th>Arrival</th>
+        <th>Departure</th>
+        <th>Time</th>
+        <th>Catering</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let flight of filteredFlights" [class.row-departed]="isDeparted(flight)">
+        <td>
+          <div class="brand-cell">
+            <span class="brand-name">{{ flight.brand }} ✈️</span>
+            <div *ngIf="isDeparted(flight)" class="departed-tag">Departed</div>
+          </div>
+        </td>
+        <td>{{ flight.planeType }}</td>
+        <td>{{ flight.crewCount }}</td>
+        <td>{{ flight.seats }}</td>
+        <td>{{ flight.arrivalDate }}</td>
+        <td>{{ flight.departureDate }}</td>
+        <td>{{ flight.departureTime }}</td>
+        <td>
+          <span class="status-pill" [ngClass]="flight.foodRequested ? 'status-yes' : 'status-no'">
+            {{ flight.foodRequested ? '🥗 Requested' : '❌ No Service' }}
+          </span>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
