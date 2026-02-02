@@ -1,5 +1,4 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
-import { DatePipe } from '@angular/common';
 import { DateDisplayComponent } from '../../../../components/date-display/date-display';
 
 @Component({
