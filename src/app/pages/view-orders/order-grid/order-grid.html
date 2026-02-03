@@ -1,0 +1,29 @@
+<div class="order-grid">
+  <div *ngFor="let flight of upcomingOrders" class="order-card">
+    <div class="header">
+      <div class="flight-info">
+        <span class="brand">{{ flight.brand }}</span>
+        <span class="plane">{{ flight.planeType }}</span>
+      </div>
+      <select
+        class="status-select"
+        [(ngModel)]="flight.orderInfo.status"
+        (ngModelChange)="onStatusChange(flight.id, $event)"
+      >
+        <option value="PENDING">PENDING</option>
+        <option value="COMPLETE">COMPLETE</option>
+      </select>
+    </div>
+
+    <div class="items">
+      <div class="item" *ngFor="let item of flight.orderInfo.itemsRequested">
+        <span>{{ getFoodName(item.foodId) }}</span>
+        <span class="qty">× {{ item.quantity }}</span>
+      </div>
+    </div>
+
+    <div class="card-actions">
+      <button class="secondary" (click)="onEdit(flight.id)">Edit Order</button>
+    </div>
+  </div>
+</div>

@@ -11,11 +11,13 @@ import { OrderService } from '../../services/orders.service';
 import { FOODOPTIONS } from '../../constants/food.constant';
 import { BackButton } from '../../components/back-button/back-button';
 import { TabsComponent } from './tabs/tabs';
+import { OrderTab } from '../../constants/ordertab.constant';
+import { UpcomingOrdersGridComponent } from './order-grid/order-grid';
 
 @Component({
   selector: 'app-view-orders',
   standalone: true,
-  imports: [CommonModule, FormsModule, BackButton, TabsComponent],
+  imports: [CommonModule, FormsModule, BackButton, TabsComponent, UpcomingOrdersGridComponent],
   templateUrl: './view-orders.html',
   // styleUrls: ['./view-orders.scss'],
 })
@@ -33,7 +35,7 @@ export class ViewOrders implements OnInit {
   previousOrders = signal<any[]>([]);
   showAddModal = signal(false);
 
-  activeTab = 'upcoming';
+  activeTab: OrderTab = 'upcoming';
   selectedFlightId: number | null = null;
 
   selectedFlight = signal<Flight | null>(null);

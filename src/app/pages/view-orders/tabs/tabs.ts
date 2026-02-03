@@ -1,5 +1,6 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { OrderTab } from '../../../constants/ordertab.constant';
 
 @Component({
   selector: 'app-order-tabs',
@@ -9,10 +10,10 @@ import { CommonModule } from '@angular/common';
   styleUrls: ['./tabs.scss'],
 })
 export class TabsComponent {
-  @Input() activeTab: 'upcoming' | 'previous' = 'upcoming';
-  @Output() activeTabChange = new EventEmitter<'upcoming' | 'previous'>();
+  @Input() activeTab: OrderTab = 'upcoming';
+  @Output() activeTabChange = new EventEmitter<OrderTab>();
 
-  setTab(tab: 'upcoming' | 'previous') {
+  setTab(tab: OrderTab) {
     this.activeTab = tab;
     this.activeTabChange.emit(tab);
   }
