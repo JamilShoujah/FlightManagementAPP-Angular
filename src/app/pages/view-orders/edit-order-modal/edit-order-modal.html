@@ -1,0 +1,53 @@
+<!-- src/app/pages/view-orders/edit-order-modal/edit-order-modal.html -->
+
+<div class="modal-overlay">
+  <div class="modal-card">
+    <!-- Header -->
+    <header class="modal-header">
+      <h3>Edit Food Order</h3>
+      <span class="food-type">{{ flight?.preferredFood }}</span>
+    </header>
+
+    <!-- Stats -->
+    <section class="stats">
+      <div class="stat">
+        <span class="label">Capacity</span>
+        <span class="value">{{ flight?.seats }}</span>
+      </div>
+
+      <div class="stat">
+        <span class="label">Ordered</span>
+        <span class="value">{{ currentTotal() }}</span>
+      </div>
+
+      <div
+        class="stat"
+        [class.ok]="remainingSeats() === 0"
+        [class.warning]="remainingSeats() !== 0"
+      >
+        <span class="label">Remaining</span>
+        <span class="value">{{ remainingSeats() }}</span>
+      </div>
+    </section>
+
+    <!-- Food list -->
+    <section class="food-list">
+      <div class="food-row" *ngFor="let option of foodOptions">
+        <span class="food-name">{{ option.name }}</span>
+
+        <input
+          type="number"
+          min="0"
+          [(ngModel)]="orderQuantities[option.id]"
+          (ngModelChange)="onQuantityChange()"
+        />
+      </div>
+    </section>
+
+    <!-- Actions -->
+    <footer class="modal-actions">
+      <button class="ghost" (click)="cancel.emit()">Cancel</button>
+      <button class="primary" [disabled]="remainingSeats() !== 0" (click)="onSave()">Save</button>
+    </footer>
+  </div>
+</div>

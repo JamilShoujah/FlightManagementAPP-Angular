@@ -17,51 +17,12 @@
     *ngIf="activeTab === 'previous'"
     [orders]="previousOrders()"
   ></app-previous-orders-grid>
-
-  <!-- MODAL -->
-  <div class="modal-overlay" *ngIf="showAddModal()">
-    <div class="modal-card">
-      <h3>Edit Order</h3>
-
-      <!-- Selected Food Type -->
-      <div class="food-type-info">
-        Food Type: <strong>{{ selectedFlight()?.preferredFood }}</strong>
-      </div>
-
-      <!-- Capacity info -->
-      <div class="capacity-info">
-        <div>
-          Capacity: <strong>{{ selectedFlight()?.seats }}</strong>
-        </div>
-        <div>
-          Ordered: <strong>{{ currentTotal() }}</strong>
-        </div>
-        <div [class.ok]="remainingSeats() >= 0" [class.warning]="remainingSeats() < 0">
-          Remaining: <strong>{{ remainingSeats() }}</strong>
-        </div>
-      </div>
-
-      <!-- Filtered food options -->
-      <div class="food-row" *ngFor="let option of filteredFoodOptions">
-        <label>{{ option.name }}</label>
-        <input
-          type="number"
-          min="0"
-          [(ngModel)]="orderQuantities[option.id]"
-          (ngModelChange)="recalculateTotals()"
-        />
-      </div>
-
-      <div class="modal-actions">
-        <button class="ghost" (click)="showAddModal.set(false)">Cancel</button>
-        <button
-          class="primary"
-          [disabled]="remainingSeats() !== 0"
-          (click)="saveOrder(selectedFlightId!)"
-        >
-          Save Changes
-        </button>
-      </div>
-    </div>
-  </div>
 </div>
+
+<app-edit-order-modal
+  *ngIf="showAddModal() && selectedFlight()"
+  [flight]="selectedFlight()"
+  [foodOptions]="filteredFoodOptions"
+  (cancel)="showAddModal.set(false)"
+  (save)="saveOrder(selectedFlightId!, $event)"
+></app-edit-order-modal>

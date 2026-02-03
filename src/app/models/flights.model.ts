@@ -5,7 +5,7 @@ export interface Flight {
   planeType: string;
   crewCount: number;
   seats: number;
-  preferredFood: string;
+  preferredFood: 'Beef' | 'Chicken' | 'Fish' | 'Vegetarian' | 'Vegan' | 'Mixed';
   arrivalDate: string;
   departureDate: string;
   departureTime: string;
