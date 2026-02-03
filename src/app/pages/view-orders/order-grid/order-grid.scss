@@ -1,91 +1,121 @@
-/* src/app/pages/view-orders/order-grid/order-grid.scss */
+@use '../../../../styles/variables' as *;
 
 .order-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); // 3-4 per row depending on width
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
   gap: 1rem;
-  padding: 1rem;
+}
 
-  .order-row {
+/* ---------- CARD ---------- */
+.order-card {
+  background: $color-card;
+  border-radius: 14px;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
+  }
+}
+
+/* ---------- HEADER ---------- */
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  strong {
+    font-size: 1.05rem;
+    font-weight: 700;
+  }
+
+  .plane {
+    font-size: 0.8rem;
+    padding: 0.25rem 0.6rem;
+    border-radius: 999px;
+    background: $color-muted;
+    color: $color-text-light;
+  }
+}
+
+/* ---------- META ---------- */
+.card-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  .meta {
     display: flex;
     flex-direction: column;
-    border: 1px solid #e0e0e0;
-    border-radius: 0.5rem;
-    padding: 1rem;
-    background-color: #fff;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-    transition: box-shadow 0.2s ease;
+
+    .label {
+      font-size: 0.7rem;
+      color: $color-text-light;
+    }
+
+    .value {
+      font-size: 1rem;
+      font-weight: 600;
+    }
+  }
+
+  .status {
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 0.35rem 0.6rem;
+    border-radius: 999px;
+    background: rgba(234, 179, 8, 0.18);
+    color: $color-warning;
+
+    &.complete {
+      background: rgba(34, 197, 94, 0.18);
+      color: $color-success;
+    }
+  }
+}
+
+/* ---------- ACTIONS ---------- */
+.card-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.25rem;
+
+  button {
+    font-size: 0.85rem;
+    font-weight: 600;
+    padding: 0.4rem 0.75rem;
+    border-radius: 10px;
+    border: none;
+    cursor: pointer;
+  }
+
+  .ghost {
+    background: transparent;
+    color: $color-text-light;
 
     &:hover {
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      color: $color-text;
     }
+  }
 
-    .flight-info {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-weight: 500;
-      margin-bottom: 0.5rem;
-      gap: 0.5rem;
+  select {
+    font-size: 0.8rem;
+    padding: 0.35rem 0.6rem;
+    border-radius: 10px;
+    border: 1px solid $color-muted-dark;
+    background: white;
 
-      strong {
-        font-size: 1rem;
-      }
-
-      span {
-        font-size: 0.85rem;
-        color: #555;
-      }
-    }
-
-    .ordered-food {
-      display: flex;
-      flex-direction: column;
-      gap: 0.25rem;
-      margin-bottom: 0.5rem;
-      font-size: 0.85rem;
-      color: #333;
-
-      div {
-        &::before {
-          content: '🍽️ ';
-        }
-      }
-
-      ng-template {
-        font-style: italic;
-        color: #999;
-      }
-    }
-
-    .order-actions {
-      display: flex;
-      justify-content: flex-start;
-      align-items: center;
-      gap: 0.5rem;
-
-      button {
-        padding: 0.35rem 0.7rem;
-        border: none;
-        border-radius: 0.25rem;
-        cursor: pointer;
-        font-weight: 500;
-        background-color: #007bff;
-        color: #fff;
-        transition: background-color 0.2s ease;
-
-        &:hover {
-          background-color: #0056b3;
-        }
-      }
-
-      select {
-        padding: 0.25rem 0.5rem;
-        border-radius: 0.25rem;
-        border: 1px solid #ccc;
-        font-size: 0.85rem;
-        cursor: pointer;
-      }
+    &:focus {
+      outline: none;
+      border-color: $color-primary;
     }
   }
 }

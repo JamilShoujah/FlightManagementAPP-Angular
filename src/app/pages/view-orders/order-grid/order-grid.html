@@ -1,19 +1,33 @@
 <div class="order-grid">
-  <div *ngFor="let flight of upcomingOrders" class="order-row">
-    <div class="flight-info">
-      <strong>{{ flight.brand }} - {{ flight.planeType }}</strong>
-      <span>Seats: {{ flight.seats }}</span>
-      <span>Status: {{ flight.orderInfo.status }}</span>
+  <div *ngFor="let flight of upcomingOrders" class="order-card">
+    <!-- Header -->
+    <div class="card-header">
+      <strong>{{ flight.brand }}</strong>
+      <span class="plane">{{ flight.planeType }}</span>
     </div>
 
-    <div class="order-actions">
-      <button (click)="onEdit(flight.id)">Edit Order</button>
+    <!-- Meta -->
+    <div class="card-meta">
+      <div class="meta">
+        <span class="label">Seats</span>
+        <span class="value">{{ flight.seats }}</span>
+      </div>
+
+      <div class="meta status" [class.complete]="flight.orderInfo.status === 'COMPLETE'">
+        {{ flight.orderInfo.status }}
+      </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="card-actions">
+      <button class="ghost" (click)="onEdit(flight.id)">Edit</button>
+
       <select
         [value]="flight.orderInfo.status"
         (change)="onStatusChange(flight.id, $any($event.target).value)"
       >
-        <option value="PENDING">PENDING</option>
-        <option value="COMPLETE">COMPLETE</option>
+        <option value="PENDING">Pending</option>
+        <option value="COMPLETE">Complete</option>
       </select>
     </div>
   </div>

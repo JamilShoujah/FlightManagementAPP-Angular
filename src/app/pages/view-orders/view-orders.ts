@@ -33,6 +33,7 @@ import { FlightWithOrder } from '../../models/flight&order.model';
     EditOrderModalComponent,
   ],
   templateUrl: './view-orders.html',
+  styleUrls: ['./view-orders.scss'],
 })
 export class ViewOrders implements OnInit {
   private flightService = inject(FlightService);

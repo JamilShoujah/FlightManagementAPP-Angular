@@ -1,0 +1,134 @@
+@use '../../../../styles/variables' as *;
+@use '../../../../styles/mixins' as *;
+
+.history-table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+}
+
+/* ---------- TABLE ---------- */
+.modern-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  background: $color-card;
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
+
+  thead {
+    background: $color-muted;
+
+    th {
+      padding: 0.9rem 1rem;
+      text-align: left;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: $color-text-light;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+  }
+
+  tbody {
+    tr {
+      transition: background 0.15s ease;
+
+      &:hover {
+        background: rgba($color-primary, 0.04);
+      }
+
+      &:not(:last-child) {
+        border-bottom: 1px solid $color-muted-dark;
+      }
+    }
+
+    td {
+      padding: 1rem;
+      vertical-align: top;
+      font-size: 0.95rem;
+      color: $color-text;
+    }
+  }
+}
+
+/* ---------- FLIGHT INFO ---------- */
+.flight-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+
+  strong {
+    font-size: 1rem;
+    font-weight: 600;
+    color: $color-text;
+  }
+
+  .plane-type {
+    font-size: 0.85rem;
+    color: $color-text-light;
+  }
+}
+
+/* ---------- STATUS ---------- */
+.status-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.35rem 0.75rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+
+  &.pending {
+    background: rgba($color-warning, 0.15);
+    color: $color-warning;
+  }
+
+  &.complete {
+    background: rgba($color-success, 0.15);
+    color: $color-success;
+  }
+}
+
+/* ---------- ITEMS ---------- */
+.items-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem 0.75rem;
+}
+
+.history-item {
+  background: $color-muted;
+  padding: 0.35rem 0.6rem;
+  border-radius: 8px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: $color-text;
+}
+
+/* ---------- MOBILE ---------- */
+@media (max-width: 768px) {
+  .modern-table {
+    thead {
+      display: none;
+    }
+
+    tbody tr {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 0.75rem;
+      padding: 1rem;
+      border-bottom: 1px solid $color-muted-dark;
+    }
+
+    tbody td {
+      padding: 0;
+    }
+  }
+
+  .items-list {
+    gap: 0.4rem;
+  }
+}

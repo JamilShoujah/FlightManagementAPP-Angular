@@ -21,6 +21,7 @@ import { AddFlightModalComponent } from './add-flight-modal/add-flight-modal';
     AddFlightModalComponent,
   ],
   templateUrl: './view-flights.html',
+  styleUrls: ['./view-flights.scss'],
 })
 export class ViewFlights implements OnInit {
   flights: Flight[] = [];

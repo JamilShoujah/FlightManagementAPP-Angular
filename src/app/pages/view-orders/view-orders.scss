@@ -1,0 +1,42 @@
+@use '../../../styles/variables' as *;
+
+.orders-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1.25rem 1.5rem 3rem;
+
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+app-back-button {
+  align-self: flex-start;
+}
+
+app-date-display {
+  margin-top: -0.25rem;
+}
+
+app-order-tabs {
+  margin-top: 0.5rem;
+}
+
+app-upcoming-orders-grid,
+app-previous-orders-grid {
+  margin-top: 0.75rem;
+}
+
+.empty-state {
+  padding: 2rem;
+  text-align: center;
+  color: $color-text-light;
+  font-size: 0.9rem;
+}
+
+@media (max-width: 768px) {
+  .orders-container {
+    padding: 1rem;
+    gap: 1rem;
+  }
+}
