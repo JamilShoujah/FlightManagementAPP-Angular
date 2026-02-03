@@ -26,7 +26,9 @@ import { AddFlightModalComponent } from './add-flight-modal/add-flight-modal';
 export class ViewFlights implements OnInit {
   flights: Flight[] = [];
   isModalOpen = false;
-  hideDeparted = false;
+
+  /** Default: show only active flights */
+  hideDeparted = true;
 
   today: Date = new Date();
   systemDateStr = '';
@@ -45,12 +47,13 @@ export class ViewFlights implements OnInit {
     setInterval(() => this.updateSystemTime(), 60000);
   }
 
+  /** System clock */
   updateSystemTime() {
     this.today = new Date();
     this.systemDateStr = this.today.toISOString().split('T')[0];
   }
 
-  // Modal
+  /** Modal */
   openModal() {
     this.isModalOpen = true;
   }
@@ -58,18 +61,22 @@ export class ViewFlights implements OnInit {
     this.isModalOpen = false;
   }
 
-  // Flights table
+  /** Filtered flights for table */
   get filteredFlights(): Flight[] {
     return this.hideDeparted ? this.flights.filter((f) => !this.isDeparted(f)) : this.flights;
   }
+
+  /** Flight status */
   isDeparted(flight: Flight): boolean {
     return new Date(`${flight.departureDate}T${flight.departureTime}`) < this.today;
   }
-  toggleHideDeparted() {
-    this.hideDeparted = !this.hideDeparted;
+
+  /** Handle toggle from header */
+  toggleHideDeparted(value: boolean) {
+    this.hideDeparted = value;
   }
 
-  // Submit new flight
+  /** Submit new flight */
   onSubmit(flight: Flight) {
     this.flightService.addFlight(flight);
     this.sortFlights();

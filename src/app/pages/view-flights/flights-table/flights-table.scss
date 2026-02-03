@@ -1,60 +1,161 @@
 @use '../../../../styles/mixins' as *;
 @use '../../../../styles/variables' as *;
-
 .table-wrapper {
-  background: $color-card;
+  background: #fff;
   border-radius: 16px;
   overflow: hidden;
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
+}
 
-  .flights-table {
-    width: 100%;
-    border-collapse: separate;
-    border-spacing: 0 10px;
+.flights-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
 
-    thead th {
-      background: $color-muted;
-      padding: 0.75rem 1rem;
-      font-size: 0.8rem;
-      font-weight: 700;
-      color: $color-text-light;
-      text-transform: uppercase;
+  thead {
+    background: #f7f8fa;
+
+    th {
       text-align: left;
+      padding: 14px 16px;
+      font-weight: 600;
+      color: #555;
+      border-bottom: 1px solid #e6e8eb;
     }
+  }
 
-    tbody td {
-      background: $color-card;
-      padding: 0.75rem 1rem;
-      border-radius: 12px;
-      font-size: 0.9rem;
-      color: $color-text;
-    }
+  tbody {
+    tr {
+      transition:
+        background 0.2s ease,
+        opacity 0.2s ease;
 
-    .status-pill {
-      padding: 6px 12px;
-      border-radius: 20px;
-      font-size: 0.7rem;
-      font-weight: 700;
-      text-transform: uppercase;
-
-      &.status-yes {
-        background: #dcfce7;
-        color: #15803d;
-      }
-      &.status-no {
-        background: #fee2e2;
-        color: #b91c1c;
+      &:hover {
+        background: #fafafa;
       }
     }
 
-    .departed-tag {
-      background: #64748b;
-      color: white;
-      font-size: 0.65rem;
-      font-weight: 700;
-      padding: 2px 6px;
-      border-radius: 6px;
-      text-transform: uppercase;
+    td {
+      padding: 14px 16px;
+      border-bottom: 1px solid #eee;
+      vertical-align: middle;
     }
+  }
+}
+
+/* ===== Brand Cell ===== */
+.brand-cell {
+  position: relative;
+}
+
+.brand-content {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.brand-name {
+  font-weight: 600;
+}
+
+.plane-type {
+  font-size: 0.8rem;
+  color: #777;
+}
+
+/* ===== Departed State ===== */
+.departed-row {
+  background: linear-gradient(to right, rgba(0, 0, 0, 0.02), rgba(0, 0, 0, 0.01));
+  opacity: 0.75;
+
+  td {
+    color: #777;
+  }
+
+  .status-pill {
+    filter: grayscale(0.7);
+  }
+}
+
+/* ===== Departed Badge ===== */
+.departed-badge {
+  position: absolute;
+  top: 50%;
+  right: 12px;
+  transform: translateY(-50%);
+  background: #111;
+  color: #fff;
+  font-size: 0.7rem;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+
+/* ===== Catering Status ===== */
+.status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.status-yes {
+  background: #e7f6ee;
+  color: #1a7f4d;
+}
+
+.status-no {
+  background: #fdecec;
+  color: #b42318;
+}
+
+.departed-toggle {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  background: #f1f3f5;
+  border-radius: 999px;
+  padding: 4px;
+  width: 160px;
+  height: 38px;
+  cursor: pointer;
+  user-select: none;
+}
+
+/* Options */
+.toggle-option {
+  flex: 1;
+  text-align: center;
+  font-size: 0.8rem;
+  font-weight: 600;
+  z-index: 2;
+  color: #666;
+  transition: color 0.2s ease;
+
+  &.active {
+    color: #111;
+  }
+}
+
+/* Sliding pill */
+.toggle-slider {
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  width: calc(50% - 4px);
+  height: calc(100% - 8px);
+  background: #fff;
+  border-radius: 999px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+  transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 1;
+
+  &.right {
+    transform: translateX(100%);
   }
 }

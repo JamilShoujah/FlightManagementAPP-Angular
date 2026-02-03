@@ -5,8 +5,16 @@
   </div>
 
   <div class="controls-group">
-    <div class="filter-toggle" (click)="toggleHideDeparted()" [class.active]="hideDeparted">
-      Hide Departed
+    <div class="departed-toggle">
+      <div class="toggle-option" [class.active]="hideDeparted" (click)="setHideDeparted(true)">
+        Active
+      </div>
+
+      <div class="toggle-option" [class.active]="!hideDeparted" (click)="setHideDeparted(false)">
+        All
+      </div>
+
+      <div class="toggle-slider" [class.right]="!hideDeparted"></div>
     </div>
 
     <app-date-display [date]="today"></app-date-display>

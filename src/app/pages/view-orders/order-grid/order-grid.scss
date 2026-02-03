@@ -98,8 +98,8 @@
   }
 
   .ghost {
-    background: transparent;
-    color: $color-text-light;
+    background: $color-primary;
+    color: $color-card;
 
     &:hover {
       color: $color-text;

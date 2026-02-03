@@ -13,9 +13,12 @@ export class FlightsHeader {
   @Input() filteredFlightsLength!: number;
   @Input() hideDeparted!: boolean;
 
-  @Output() toggleHideDepartedEvent = new EventEmitter<void>();
+  // Emit the new value to the parent
+  @Output() toggleHideDepartedEvent = new EventEmitter<boolean>();
 
-  toggleHideDeparted() {
-    this.toggleHideDepartedEvent.emit();
+  setHideDeparted(value: boolean) {
+    if (this.hideDeparted !== value) {
+      this.toggleHideDepartedEvent.emit(value);
+    }
   }
 }
