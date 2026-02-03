@@ -1,0 +1,59 @@
+@use '../../../styles/mixins' as *;
+@use '../../../styles/variables' as *;
+@use '../../../styles/global' as *;
+
+@use '../../../styles.scss' as *;
+
+// ==================== Landing Page ====================
+.app-hero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  min-height: 100vh;
+  padding: 2rem;
+  gap: 1rem;
+
+  h1 {
+    font-size: 3rem;
+    font-weight: 800;
+    color: #1e293b;
+  }
+
+  p {
+    font-size: 1.25rem;
+    max-width: 600px;
+    color: #475569;
+  }
+
+  .button-group {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+
+    .app-button {
+      font-family: $font-base;
+      padding: 0.75rem 1.5rem;
+      border-radius: 12px;
+      border: none;
+      font-weight: 600;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+
+      &.blue {
+        @include button($color-primary, white);
+      }
+      &.green {
+        @include button(#16a34a, white);
+      }
+      &.red {
+        @include button(#dc2626, white);
+      }
+      &.yellow {
+        @include button(#facc15, #1e293b);
+      }
+    }
+  }
+}

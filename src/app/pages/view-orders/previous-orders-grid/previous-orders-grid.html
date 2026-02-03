@@ -1,0 +1,33 @@
+<div *ngIf="orders.length > 0" class="history-table-wrapper">
+  <table class="modern-table previous-orders-table">
+    <thead>
+      <tr>
+        <th>Flight</th>
+        <th>Status</th>
+        <th>Items</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let flight of orders">
+        <td>
+          <div class="flight-info">
+            <strong>{{ flight.brand }}</strong>
+            <div class="plane-type">{{ flight.planeType }}</div>
+          </div>
+        </td>
+        <td>
+          <span class="status-pill" [ngClass]="flight.orderInfo.status.toLowerCase()">
+            {{ flight.orderInfo.status }}
+          </span>
+        </td>
+        <td>
+          <div class="items-list">
+            <div class="history-item" *ngFor="let item of flight.orderInfo.itemsRequested">
+              {{ getFoodName(item.foodId) }} × {{ item.quantity }}
+            </div>
+          </div>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>

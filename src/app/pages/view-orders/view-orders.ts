@@ -1,3 +1,4 @@
+// src/app/pages/view-orders/view-orders.ts
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -9,13 +10,30 @@ import { FlightService } from '../../services/flights.service';
 import { FlightOrder, OrderedFoodItem, OrderStatus } from '../../models/order.models';
 import { OrderService } from '../../services/orders.service';
 import { FOODOPTIONS } from '../../constants/food.constant';
+import { BackButton } from '../../components/back-button/back-button';
+import { TabsComponent } from './tabs/tabs';
+import { OrderTab } from '../../constants/ordertab.constant';
+import { UpcomingOrdersGridComponent } from './order-grid/order-grid';
+import { PreviousOrdersGridComponent } from './previous-orders-grid/previous-orders-grid';
+import { DateDisplayComponent } from '../../components/date-display/date-display';
+import { EditOrderModalComponent } from './edit-order-modal/edit-order-modal';
+import { FlightWithOrder } from '../../models/flight&order.model';
 
 @Component({
   selector: 'app-view-orders',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [
+    CommonModule,
+    FormsModule,
+    BackButton,
+    TabsComponent,
+    UpcomingOrdersGridComponent,
+    PreviousOrdersGridComponent,
+    DateDisplayComponent,
+    EditOrderModalComponent,
+  ],
   templateUrl: './view-orders.html',
-  // styleUrls: ['./view-orders.scss'],
+  styleUrls: ['./view-orders.scss'],
 })
 export class ViewOrders implements OnInit {
   private flightService = inject(FlightService);
@@ -27,45 +45,48 @@ export class ViewOrders implements OnInit {
   orderQuantities: Record<number, number> = {};
   foodMap: Record<number, string> = {};
 
-  upcomingOrders = signal<any[]>([]);
-  previousOrders = signal<any[]>([]);
+  upcomingOrders = signal<FlightWithOrder[]>([]);
+  previousOrders = signal<FlightWithOrder[]>([]);
   showAddModal = signal(false);
 
-  activeTab = 'upcoming';
+  activeTab: OrderTab = 'upcoming';
   selectedFlightId: number | null = null;
+  selectedFlight = signal<FlightWithOrder | null>(null);
 
-  selectedFlight = signal<Flight | null>(null);
   currentTotal = signal(0);
   remainingSeats = signal(0);
 
+  today: Date = new Date();
+
   ngOnInit() {
+    // Map food id → name
     this.foodMap = Object.fromEntries(this.FOODOPTIONS.map((f) => [f.id, f.name]));
 
+    // Load flights + orders
     combineLatest([this.flightService.getFlights(), this.orderService.getOrders()]).subscribe(
-      ([flights, orders]) => {
-        this.processData(flights, orders);
-      },
+      ([flights, orders]) => this.processData(flights, orders),
     );
   }
 
   private processData(flights: Flight[], orders: FlightOrder[]) {
     const now = new Date();
 
-    const enriched = flights
+    const enriched: FlightWithOrder[] = flights
       .filter((f) => f.foodRequested)
       .map((f) => {
         const order = orders.find((o) => o.flightId === f.id);
         return {
           ...f,
-          orderInfo: order || { status: 'PENDING' as OrderStatus, itemsRequested: [] },
+          orderInfo: order || {
+            flightId: f.id,
+            status: 'PENDING' as OrderStatus,
+            itemsRequested: [],
+            lastUpdated: new Date(),
+          },
         };
-      })
-      .sort(
-        (a, b) =>
-          new Date(`${a.departureDate}T${a.departureTime}`).getTime() -
-          new Date(`${b.departureDate}T${b.departureTime}`).getTime(),
-      );
+      });
 
+    // separate upcoming and previous orders
     this.upcomingOrders.set(
       enriched.filter((f) => new Date(`${f.departureDate}T${f.departureTime}`) >= now),
     );
@@ -77,20 +98,21 @@ export class ViewOrders implements OnInit {
   selectFlight(flightId: number) {
     this.selectedFlightId = flightId;
 
-    const flight = this.flightService.getFlightsSnapshot().find((f) => f.id === flightId);
+    const allFlights = [...this.upcomingOrders(), ...this.previousOrders()];
+    const flight = allFlights.find((f) => f.id === flightId);
     if (!flight) return;
 
-    this.selectedFlight.set(flight);
+    this.selectedFlight.set({ ...flight });
 
-    const order = this.orderService.getOrderByFlightId(flightId);
-    this.orderQuantities = {};
-
-    this.filteredFoodOptions.forEach((opt) => {
-      this.orderQuantities[opt.id] =
-        order?.itemsRequested.find((i) => i.foodId === opt.id)?.quantity || 0;
+    const quantities: Record<number, number> = {};
+    this.FOODOPTIONS.forEach((opt) => {
+      quantities[opt.id] =
+        flight.orderInfo.itemsRequested.find((i) => i.foodId === opt.id)?.quantity || 0;
     });
+    this.orderQuantities = quantities;
 
     this.recalculateTotals();
+    this.showAddModal.set(true);
   }
 
   recalculateTotals() {
@@ -101,24 +123,25 @@ export class ViewOrders implements OnInit {
     this.remainingSeats.set(seats - total);
   }
 
-  saveOrder(flightId: number) {
+  saveOrder(flightId: number, items: OrderedFoodItem[]) {
     const flight = this.selectedFlight();
     if (!flight) return;
 
-    const items: OrderedFoodItem[] = Object.entries(this.orderQuantities)
-      .map(([foodId, quantity]) => ({ foodId: Number(foodId), quantity }))
-      .filter((i) => i.quantity > 0);
-
     if (
       items.some(
-        (i) => !this.FOODOPTIONS.find((o) => o.id === i.foodId && o.type === flight.preferredFood),
+        (i) =>
+          !this.FOODOPTIONS.find(
+            (o) =>
+              o.id === i.foodId &&
+              (flight.preferredFood === 'Mixed' || o.type === flight.preferredFood),
+          ),
       )
     ) {
       alert('Invalid food type selected for this flight');
       return;
     }
 
-    if (this.currentTotal() !== flight.seats) {
+    if (items.reduce((sum, i) => sum + i.quantity, 0) !== flight.seats) {
       alert(`Total meals must equal plane capacity (${flight.seats})`);
       return;
     }
@@ -134,6 +157,8 @@ export class ViewOrders implements OnInit {
       });
 
     this.showAddModal.set(false);
+    this.selectedFlight.set(null);
+
     this.processData(
       this.flightService.getFlightsSnapshot(),
       this.orderService.getOrdersSnapshot(),
@@ -142,27 +167,22 @@ export class ViewOrders implements OnInit {
 
   updateStatus(flightId: number, status: OrderStatus) {
     this.orderService.updateOrderStatus(flightId, status);
+    this.processData(
+      this.flightService.getFlightsSnapshot(),
+      this.orderService.getOrdersSnapshot(),
+    );
 
-    // Re-process flights and orders to update upcoming/previous lists
-    const flights = this.flightService.getFlightsSnapshot();
-    const orders = this.orderService.getOrdersSnapshot();
-    this.processData(flights, orders);
-
-    // Optionally switch tab if the order is now complete or delivered
-    if (status === 'COMPLETE') {
-      this.activeTab = 'previous';
-    }
+    if (status === 'COMPLETE') this.activeTab = 'previous';
   }
 
-  getFoodName(foodId: number): string {
-    return this.foodMap[foodId] || '';
+  getFoodName(foodId?: number): string {
+    return foodId != null ? this.foodMap[foodId] || '' : '';
   }
 
-  // Computed property for template
   get filteredFoodOptions() {
     const flight = this.selectedFlight();
     if (!flight) return [];
-    if (flight.preferredFood === 'Mixed') return this.FOODOPTIONS; // Show all for mixed
+    if (flight.preferredFood === 'Mixed') return this.FOODOPTIONS;
     return this.FOODOPTIONS.filter((o) => o.type === flight.preferredFood);
   }
 }

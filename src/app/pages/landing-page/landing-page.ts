@@ -5,8 +5,8 @@ import { RouterModule } from '@angular/router';
 @Component({
   selector: 'app-landing-page',
   templateUrl: './landing-page.html',
-  // styleUrls: ['./landing-page.scss'],
-  standalone: true, // keep this if using bootstrapApplication
-  imports: [RouterModule], // so routerLink works
+  styleUrls: ['./landing-page.scss'],
+  standalone: true,
+  imports: [RouterModule],
 })
 export class LandingPage {}

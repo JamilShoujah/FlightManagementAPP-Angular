@@ -1,0 +1,84 @@
+@use '../../../styles/variables' as *;
+
+.flights-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1.25rem 1.5rem 3rem;
+
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+app-back-button {
+  align-self: flex-start;
+}
+
+app-flights-header {
+  margin-top: 0.25rem;
+}
+
+app-flights-table {
+  margin-top: 0.75rem;
+}
+
+.fab-button {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+
+  background: $color-primary;
+  color: white;
+
+  font-size: 2rem;
+  font-weight: 600;
+  line-height: 1;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border: none;
+  cursor: pointer;
+
+  box-shadow: 0 10px 25px rgba($color-primary, 0.35);
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease,
+    background 0.15s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 14px 30px rgba($color-primary, 0.45);
+    background: $color-primary-hover;
+  }
+
+  &:active {
+    transform: translateY(0);
+    box-shadow: 0 8px 18px rgba($color-primary, 0.3);
+  }
+}
+
+app-add-flight-modal {
+  position: relative;
+  z-index: 10000;
+}
+
+@media (max-width: 768px) {
+  .flights-container {
+    padding: 1rem;
+    gap: 1rem;
+  }
+
+  .fab-button {
+    bottom: 1.25rem;
+    right: 1.25rem;
+    width: 52px;
+    height: 52px;
+    font-size: 1.75rem;
+  }
+}

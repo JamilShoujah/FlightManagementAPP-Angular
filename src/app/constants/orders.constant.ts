@@ -4,18 +4,25 @@ import { FLIGHTS } from './flights.constant';
 import { FOODOPTIONS } from './food.constant';
 
 // Helper to generate random orders for a flight
-function generateRandomOrder(flightId: number, seats: number) {
-  const items = FOODOPTIONS.map((opt) => ({
-    foodId: opt.id,
-    quantity: Math.floor(Math.random() * (seats / FOODOPTIONS.length)) + 1,
-  }));
-  const total = items.reduce((sum, i) => sum + i.quantity, 0);
+function generateRandomOrder(
+  flightId: number,
+  seats: number,
+  preferredFood: 'Beef' | 'Chicken' | 'Fish' | 'Vegetarian' | 'Vegan' | 'Mixed',
+) {
+  const options = FOODOPTIONS.filter((opt) => {
+    if (preferredFood === 'Mixed') return true;
+    if (preferredFood === 'Vegetarian') return opt.type === 'Vegetarian' || opt.type === 'Vegan';
+    return opt.type === preferredFood;
+  });
 
-  // Adjust total to match seats exactly
+  const items = options.map((opt) => ({
+    foodId: opt.id,
+    quantity: Math.floor(Math.random() * (seats / options.length)) + 1,
+  }));
+
+  const total = items.reduce((sum, i) => sum + i.quantity, 0);
   const diff = seats - total;
-  if (diff !== 0) {
-    items[0].quantity += diff;
-  }
+  if (diff !== 0 && items.length > 0) items[0].quantity += diff;
 
   return {
     flightId,
@@ -45,9 +52,10 @@ export const ORDERS: FlightOrder[] = [
     itemsRequested: [{ foodId: 7, quantity: 210 }],
     lastUpdated: new Date('2026-01-24T18:00:00'),
   },
+
   // Auto-generate completed orders for departed flights
   ...FLIGHTS.filter((f) => {
     const depDateTime = new Date(`${f.departureDate}T${f.departureTime}`);
-    return depDateTime < now && f.foodRequested; // Only for departed flights with food requested
-  }).map((flight) => generateRandomOrder(flight.id, flight.seats)),
+    return depDateTime < now && f.foodRequested;
+  }).map((flight) => generateRandomOrder(flight.id, flight.seats, flight.preferredFood)),
 ];

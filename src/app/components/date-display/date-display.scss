@@ -1,0 +1,31 @@
+@use '../../../styles/mixins' as *;
+@use '../../../styles/variables' as *;
+
+.date-display {
+  display: flex;
+  flex-direction: column;
+  text-align: right;
+  background: $color-muted;
+  padding: 0.5rem 1rem;
+  border-radius: 12px;
+  border: 1px solid $color-muted-dark;
+
+  .label {
+    font-size: 0.65rem;
+    font-weight: 700;
+    color: #94a3b8;
+    text-transform: uppercase;
+  }
+
+  .value {
+    font-weight: 600;
+    color: #1e293b;
+    font-size: 0.9rem;
+  }
+
+  .time {
+    font-weight: 700;
+    color: $color-primary;
+    font-size: 0.85rem;
+  }
+}

@@ -1,0 +1,101 @@
+@use '../../../../../styles/variables' as *;
+
+.header-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: $color-card;
+  padding: 1.5rem 2rem;
+  border-radius: 16px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.05);
+
+  h2 {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: $color-text;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  p {
+    margin: 0.25rem 0 0;
+    font-size: 0.9rem;
+    color: $color-text-light;
+  }
+
+  .controls-group {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+  }
+}
+
+/* Pill Toggle for Departed / Active */
+.departed-toggle {
+  position: relative;
+  display: flex;
+  width: 130px;
+  height: 42px;
+  background: $color-muted;
+  border-radius: 21px;
+  overflow: hidden;
+  cursor: pointer;
+  user-select: none;
+
+  .toggle-option {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: 600;
+    font-size: 0.875rem;
+    color: $color-text-light;
+    z-index: 2;
+    transition: color 0.25s;
+
+    &.active {
+      color: white;
+    }
+  }
+
+  .toggle-slider {
+    position: absolute;
+    top: 2px;
+    bottom: 2px;
+    left: 2px;
+    width: 50%;
+    background: $color-primary;
+    border-radius: 20px;
+    transition: left 0.3s;
+    z-index: 1;
+
+    &.right {
+      left: 50%;
+    }
+  }
+}
+
+app-date-display {
+  padding-left: 1rem;
+  border-left: 1px solid $color-muted-dark;
+}
+
+@media (max-width: 768px) {
+  .header-section {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .controls-group {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  app-date-display {
+    border-left: none;
+    padding-left: 0;
+  }
+}

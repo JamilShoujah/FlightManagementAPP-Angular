@@ -1,0 +1,121 @@
+@use '../../../../styles/mixins' as *;
+@use '../../../../styles/variables' as *;
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.35);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-card {
+  background: $color-card;
+  border-radius: 14px;
+  padding: 1.5rem;
+  width: 90%;
+  max-width: 500px;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.modal-header {
+  h3 {
+    font-size: 1.25rem;
+    font-weight: 700;
+  }
+}
+
+.modal-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+
+  .form-group {
+    display: flex;
+    flex-direction: column;
+
+    label {
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-bottom: 0.25rem;
+    }
+
+    input,
+    select {
+      padding: 0.4rem 0.6rem;
+      border-radius: 10px;
+      border: 1px solid $color-muted-dark;
+      font-size: 0.85rem;
+
+      &:focus {
+        outline: none;
+        border-color: $color-primary;
+      }
+    }
+  }
+
+  .form-row {
+    display: flex;
+    gap: 1rem;
+
+    .form-group {
+      flex: 1;
+    }
+  }
+
+  .chunky-checkbox {
+    display: flex;
+    align-items: center;
+
+    .checkbox-box {
+      width: 16px;
+      height: 16px;
+      border: 1px solid $color-muted-dark;
+      border-radius: 4px;
+      background: white;
+      margin-right: 0.5rem;
+    }
+
+    .checkbox-label {
+      font-size: 0.85rem;
+    }
+  }
+
+  .modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.5rem;
+    margin-top: 1rem;
+
+    button {
+      padding: 0.4rem 0.75rem;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 0.85rem;
+      border: none;
+      cursor: pointer;
+    }
+
+    .ghost {
+      background: $color-primary;
+      color: $color-card;
+
+      &:hover {
+        color: $color-text;
+      }
+    }
+
+    .primary {
+      background: $color-success;
+      color: white;
+
+      &:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+    }
+  }
+}
