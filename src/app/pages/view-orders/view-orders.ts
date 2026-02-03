@@ -13,11 +13,21 @@ import { BackButton } from '../../components/back-button/back-button';
 import { TabsComponent } from './tabs/tabs';
 import { OrderTab } from '../../constants/ordertab.constant';
 import { UpcomingOrdersGridComponent } from './order-grid/order-grid';
+import { PreviousOrdersGridComponent } from './previous-orders-grid/previous-orders-grid';
+import { DateDisplayComponent } from '../../components/date-display/date-display';
 
 @Component({
   selector: 'app-view-orders',
   standalone: true,
-  imports: [CommonModule, FormsModule, BackButton, TabsComponent, UpcomingOrdersGridComponent],
+  imports: [
+    CommonModule,
+    FormsModule,
+    BackButton,
+    TabsComponent,
+    UpcomingOrdersGridComponent,
+    PreviousOrdersGridComponent,
+    DateDisplayComponent,
+  ],
   templateUrl: './view-orders.html',
   // styleUrls: ['./view-orders.scss'],
 })
@@ -41,6 +51,8 @@ export class ViewOrders implements OnInit {
   selectedFlight = signal<Flight | null>(null);
   currentTotal = signal(0);
   remainingSeats = signal(0);
+
+  today: Date = new Date(); // <-- add this
 
   ngOnInit() {
     this.foodMap = Object.fromEntries(this.FOODOPTIONS.map((f) => [f.id, f.name]));

@@ -1,8 +1,9 @@
 <div class="tabs">
-  <button (click)="activeTab = 'upcoming'" [class.active]="activeTab === 'upcoming'">
+  <button (click)="setTab('upcoming')" [class.active]="activeTab === 'upcoming'">
     Upcoming Orders
   </button>
-  <button (click)="activeTab = 'previous'" [class.active]="activeTab === 'previous'">
+
+  <button (click)="setTab('previous')" [class.active]="activeTab === 'previous'">
     Completed Orders
   </button>
 </div>
