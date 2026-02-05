@@ -2,6 +2,7 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Flight } from '../../../models/flights.model';
+import { FoodType } from '../../../constants/food.constant';
 
 @Component({
   selector: 'app-add-flight-modal',
@@ -13,7 +14,7 @@ import { Flight } from '../../../models/flights.model';
 export class AddFlightModalComponent {
   @Input() isModalOpen = false;
   @Input() airlines: string[] = [];
-  @Input() foodTypes: string[] = [];
+  @Input() foodTypes: FoodType[] = [];
   @Input() today!: Date;
   @Input() systemDateStr = '';
 

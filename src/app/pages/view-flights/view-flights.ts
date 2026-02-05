@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 import { Flight } from '../../models/flights.model';
 import { FlightService } from '../../services/flights.service';
 import { AIRLINES } from '../../constants/brand.constant';
-import { FOODOPTIONS } from '../../constants/food.constant';
+import { FOODOPTIONS, FOODTYPESARRAY } from '../../constants/food.constant';
 import { FlightsHeader } from './header/flights-header/flights-header';
 import { BackButton } from '../../components/back-button/back-button';
 import { FlightsTableComponent } from './flights-table/flights-table';
@@ -34,7 +34,7 @@ export class ViewFlights implements OnInit {
   systemDateStr = '';
 
   airlines = AIRLINES;
-  foodTypes = [...new Set(FOODOPTIONS.map((f) => f.type)), 'Any'];
+  foodTypes = FOODTYPESARRAY;
 
   constructor(private flightService: FlightService) {}
 
