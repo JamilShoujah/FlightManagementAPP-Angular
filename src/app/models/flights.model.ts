@@ -1,3 +1,5 @@
+import { FoodType } from '../constants/food.constant';
+
 // src / app / models / flights.model.ts;
 export interface Flight {
   id: number;
@@ -5,7 +7,7 @@ export interface Flight {
   planeType: string;
   crewCount: number;
   seats: number;
-  preferredFood: 'Beef' | 'Chicken' | 'Fish' | 'Vegetarian' | 'Vegan' | 'Mixed';
+  preferredFood: FoodType;
   arrivalDate: string;
   departureDate: string;
   departureTime: string;

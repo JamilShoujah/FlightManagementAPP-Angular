@@ -1,14 +1,16 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Observable } from 'rxjs';
 
 import { Flight } from '../../models/flights.model';
 import { FlightService } from '../../services/flights.service';
 import { AIRLINES } from '../../constants/brand.constant';
-import { FOODOPTIONS } from '../../constants/food.constant';
+import { FOODTYPESARRAY } from '../../constants/food.constant';
 import { FlightsHeader } from './header/flights-header/flights-header';
 import { BackButton } from '../../components/back-button/back-button';
 import { FlightsTableComponent } from './flights-table/flights-table';
 import { AddFlightModalComponent } from './add-flight-modal/add-flight-modal';
+import { ClockService } from '../../services/clock.service';
 
 @Component({
   selector: 'app-view-flights',
@@ -27,30 +29,25 @@ export class ViewFlights implements OnInit {
   flights: Flight[] = [];
   isModalOpen = false;
 
-  /** Default: show only active flights */
   hideDeparted = true;
-
-  today: Date = new Date();
-  systemDateStr = '';
+  today$!: Observable<Date>; // 🚀 now reactive
 
   airlines = AIRLINES;
-  foodTypes = [...new Set(FOODOPTIONS.map((f) => f.type)), 'Any'];
+  foodTypes = FOODTYPESARRAY;
 
-  constructor(private flightService: FlightService) {}
+  constructor(
+    private flightService: FlightService,
+    private clockService: ClockService,
+  ) {}
 
   ngOnInit(): void {
-    this.updateSystemTime();
+    // Subscribe to clock observable
+    this.today$ = this.clockService.now$;
+
     this.flightService.getFlights().subscribe((flights) => {
       this.flights = flights;
       this.sortFlights();
     });
-    setInterval(() => this.updateSystemTime(), 60000);
-  }
-
-  /** System clock */
-  updateSystemTime() {
-    this.today = new Date();
-    this.systemDateStr = this.today.toISOString().split('T')[0];
   }
 
   /** Modal */
@@ -62,21 +59,20 @@ export class ViewFlights implements OnInit {
   }
 
   /** Filtered flights for table */
-  get filteredFlights(): Flight[] {
-    return this.hideDeparted ? this.flights.filter((f) => !this.isDeparted(f)) : this.flights;
+  filteredFlights(today: Date): Flight[] {
+    return this.hideDeparted
+      ? this.flights.filter((f) => !this.isDeparted(f, today))
+      : this.flights;
   }
 
-  /** Flight status */
-  isDeparted(flight: Flight): boolean {
-    return new Date(`${flight.departureDate}T${flight.departureTime}`) < this.today;
+  isDeparted(flight: Flight, today: Date): boolean {
+    return new Date(`${flight.departureDate}T${flight.departureTime}`) < today;
   }
 
-  /** Handle toggle from header */
   toggleHideDeparted(value: boolean) {
     this.hideDeparted = value;
   }
 
-  /** Submit new flight */
   onSubmit(flight: Flight) {
     this.flightService.addFlight(flight);
     this.sortFlights();

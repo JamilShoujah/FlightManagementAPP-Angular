@@ -60,7 +60,9 @@
         <label>Preferred Food Type</label>
         <select formControlName="preferredFood">
           <option value="" disabled>Select food type</option>
-          <option *ngFor="let type of foodTypes" [value]="type">{{ type }}</option>
+          <option *ngFor="let type of foodTypes" [value]="type">
+            {{ type }}
+          </option>
         </select>
       </div>
 

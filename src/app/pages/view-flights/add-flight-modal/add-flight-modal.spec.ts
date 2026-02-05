@@ -1,18 +1,17 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { AddFlightModal } from './add-flight-modal';
+import { AddFlightModalComponent } from './add-flight-modal';
 
 describe('AddFlightModal', () => {
-  let component: AddFlightModal;
-  let fixture: ComponentFixture<AddFlightModal>;
+  let component: AddFlightModalComponent;
+  let fixture: ComponentFixture<AddFlightModalComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [AddFlightModal]
-    })
-    .compileComponents();
+      imports: [AddFlightModalComponent],
+    }).compileComponents();
 
-    fixture = TestBed.createComponent(AddFlightModal);
+    fixture = TestBed.createComponent(AddFlightModalComponent);
     component = fixture.componentInstance;
     await fixture.whenStable();
   });

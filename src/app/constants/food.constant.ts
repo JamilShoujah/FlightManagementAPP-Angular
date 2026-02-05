@@ -1,9 +1,19 @@
 // src / app / constants / food.constant.ts;
 
+export type FoodType = 'Beef' | 'Chicken' | 'Fish' | 'Vegetarian' | 'Vegan' | 'Mixed';
+export const FOODTYPESARRAY: FoodType[] = [
+  'Beef',
+  'Chicken',
+  'Fish',
+  'Vegetarian',
+  'Vegan',
+  'Mixed',
+];
+
 export interface FoodOption {
   id: number;
   name: string;
-  type: 'Beef' | 'Chicken' | 'Fish' | 'Vegetarian' | 'Vegan' | 'Any';
+  type: FoodType;
   tags?: ('Halal' | 'Gluten-Free')[];
 }
 

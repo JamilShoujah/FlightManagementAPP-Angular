@@ -1,28 +1,29 @@
 <div class="flights-container">
   <app-back-button></app-back-button>
+  <!-- your outer wrapper if needed -->
+  <!-- new styled container -->
+  <ng-container *ngIf="today$ | async as today">
+    <app-flights-header
+      [today]="today"
+      [hideDeparted]="hideDeparted"
+      [filteredFlightsLength]="filteredFlights(today).length"
+      (toggleHideDepartedEvent)="hideDeparted = $event"
+    ></app-flights-header>
 
-  <app-flights-header
-    [today]="today"
-    [hideDeparted]="hideDeparted"
-    [filteredFlightsLength]="filteredFlights.length"
-    (toggleHideDepartedEvent)="hideDeparted = $event"
-  ></app-flights-header>
+    <app-flights-table
+      [filteredFlights]="filteredFlights(today)"
+      [hideDeparted]="hideDeparted"
+      [today]="today"
+    ></app-flights-table>
 
-  <app-flights-table
-    [filteredFlights]="filteredFlights"
-    [hideDeparted]="hideDeparted"
-    [today]="today"
-  ></app-flights-table>
-
-  <button class="fab-button" (click)="openModal()">+</button>
-
-  <app-add-flight-modal
-    [isModalOpen]="isModalOpen"
-    [airlines]="airlines"
-    [foodTypes]="foodTypes"
-    [today]="today"
-    [systemDateStr]="systemDateStr"
-    (submitFlight)="onSubmit($event)"
-    (close)="closeModal()"
-  ></app-add-flight-modal>
+    <button class="fab-button" (click)="openModal()">+</button>
+    <app-add-flight-modal
+      [isModalOpen]="isModalOpen"
+      [airlines]="airlines"
+      [foodTypes]="foodTypes"
+      [today]="today"
+      (submitFlight)="onSubmit($event)"
+      (close)="closeModal()"
+    ></app-add-flight-modal>
+  </ng-container>
 </div>
