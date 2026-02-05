@@ -1,12 +1,12 @@
 <div class="orders-container">
   <app-back-button></app-back-button>
 
-  <!-- Use reactive today$ -->
   <ng-container *ngIf="today$ | async as today">
     <app-date-display [date]="today"></app-date-display>
 
     <app-order-tabs [(activeTab)]="activeTab"></app-order-tabs>
 
+    <!-- Upcoming Orders -->
     <app-upcoming-orders-grid
       *ngIf="activeTab === 'upcoming'"
       [upcomingOrders]="upcomingOrders()"
@@ -16,11 +16,13 @@
       (openModal)="showAddModal.set(true)"
     ></app-upcoming-orders-grid>
 
+    <!-- Previous Orders -->
     <app-previous-orders-grid
       *ngIf="activeTab === 'previous'"
       [orders]="previousOrders()"
     ></app-previous-orders-grid>
 
+    <!-- Edit Modal -->
     <app-edit-order-modal
       *ngIf="showAddModal() && selectedFlight()"
       [flight]="selectedFlight()"
