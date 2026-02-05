@@ -1,28 +1,32 @@
 <div class="orders-container">
   <app-back-button></app-back-button>
-  <app-date-display [date]="today"></app-date-display>
 
-  <app-order-tabs [(activeTab)]="activeTab"> </app-order-tabs>
+  <!-- Use reactive today$ -->
+  <ng-container *ngIf="today$ | async as today">
+    <app-date-display [date]="today"></app-date-display>
 
-  <app-upcoming-orders-grid
-    *ngIf="activeTab === 'upcoming'"
-    [upcomingOrders]="upcomingOrders()"
-    [getFoodName]="getFoodName"
-    (editOrder)="selectFlight($event)"
-    (statusChange)="updateStatus($event.flightId, $event.status)"
-    (openModal)="showAddModal.set(true)"
-  ></app-upcoming-orders-grid>
+    <app-order-tabs [(activeTab)]="activeTab"></app-order-tabs>
 
-  <app-previous-orders-grid
-    *ngIf="activeTab === 'previous'"
-    [orders]="previousOrders()"
-  ></app-previous-orders-grid>
+    <app-upcoming-orders-grid
+      *ngIf="activeTab === 'upcoming'"
+      [upcomingOrders]="upcomingOrders()"
+      [getFoodName]="getFoodName"
+      (editOrder)="selectFlight($event)"
+      (statusChange)="updateStatus($event.flightId, $event.status)"
+      (openModal)="showAddModal.set(true)"
+    ></app-upcoming-orders-grid>
+
+    <app-previous-orders-grid
+      *ngIf="activeTab === 'previous'"
+      [orders]="previousOrders()"
+    ></app-previous-orders-grid>
+
+    <app-edit-order-modal
+      *ngIf="showAddModal() && selectedFlight()"
+      [flight]="selectedFlight()"
+      [foodOptions]="filteredFoodOptions"
+      (cancel)="showAddModal.set(false)"
+      (save)="saveOrder(selectedFlightId!, $event)"
+    ></app-edit-order-modal>
+  </ng-container>
 </div>
-
-<app-edit-order-modal
-  *ngIf="showAddModal() && selectedFlight()"
-  [flight]="selectedFlight()"
-  [foodOptions]="filteredFoodOptions"
-  (cancel)="showAddModal.set(false)"
-  (save)="saveOrder(selectedFlightId!, $event)"
-></app-edit-order-modal>
