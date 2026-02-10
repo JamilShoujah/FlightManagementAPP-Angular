@@ -74,9 +74,13 @@ export class ViewFlights implements OnInit {
   }
 
   onSubmit(flight: Flight) {
-    this.flightService.addFlight(flight);
-    this.sortFlights();
-    this.closeModal();
+    this.flightService.addFlight(flight).subscribe({
+      next: (addedFlight) => {
+        this.sortFlights();
+        this.closeModal();
+      },
+      error: (err) => console.error('Failed to add flight', err),
+    });
   }
 
   private sortFlights() {

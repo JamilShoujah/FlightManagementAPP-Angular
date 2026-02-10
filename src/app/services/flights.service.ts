@@ -1,31 +1,79 @@
-// src / app / services / flights.service.ts;
+// src/app/services/flights.service.ts
 
 import { Injectable } from '@angular/core';
-import { Observable, BehaviorSubject } from 'rxjs';
-import { FLIGHTS } from '../constants/flights.constant';
+import { HttpClient } from '@angular/common/http';
+import { BehaviorSubject, Observable, tap } from 'rxjs';
+import { environment } from '../../environments/environment';
 import { Flight } from '../models/flights.model';
 
 @Injectable({
   providedIn: 'root',
 })
 export class FlightService {
-  // Use a BehaviorSubject to make the data "live" across the app
-  private flightsData = [...FLIGHTS];
-  private flightsSubject = new BehaviorSubject<Flight[]>(this.flightsData);
+  private apiUrl = `${environment.apiBaseUrl}/flights`;
 
-  // Observable of flights
+  // Local cache for reactive updates
+  private flightsSubject = new BehaviorSubject<Flight[]>([]);
+  flights$ = this.flightsSubject.asObservable(); // public observable
+
+  constructor(private http: HttpClient) {
+    this.loadFlights(); // initialize with current data from backend
+  }
+
+  /** Load flights from backend */
+  private loadFlights(): void {
+    this.http.get<Flight[]>(this.apiUrl).subscribe({
+      next: (flights) => this.flightsSubject.next(flights),
+      error: (err) => console.error('Failed to load flights', err),
+    });
+  }
+
+  /** Get flights as observable */
   getFlights(): Observable<Flight[]> {
-    return this.flightsSubject.asObservable();
+    return this.flights$;
   }
 
-  // Add a new flight
-  addFlight(newFlight: Flight): void {
-    this.flightsData = [...this.flightsData, newFlight];
-    this.flightsSubject.next(this.flightsData);
+  /** Get a single flight by ID */
+  getFlightById(id: string | number): Observable<Flight> {
+    return this.http.get<Flight>(`${this.apiUrl}/${id}`);
   }
 
-  // Return a snapshot of the current flights
+  /** Add a new flight */
+  addFlight(flight: Flight): Observable<Flight> {
+    return this.http.post<Flight>(this.apiUrl, flight).pipe(
+      tap((newFlight) => {
+        const currentFlights = this.flightsSubject.getValue();
+        this.flightsSubject.next([...currentFlights, newFlight]);
+      }),
+    );
+  }
+
+  /** Update an existing flight */
+  updateFlight(id: string | number, flight: Flight): Observable<Flight> {
+    return this.http.put<Flight>(`${this.apiUrl}/${id}`, flight).pipe(
+      tap((updatedFlight) => {
+        const flights = this.flightsSubject.getValue();
+        const index = flights.findIndex((f) => f.id === id);
+        if (index !== -1) {
+          flights[index] = updatedFlight;
+          this.flightsSubject.next([...flights]);
+        }
+      }),
+    );
+  }
+
+  /** Delete a flight by ID */
+  deleteFlight(id: string | number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${id}`).pipe(
+      tap(() => {
+        const flights = this.flightsSubject.getValue();
+        this.flightsSubject.next(flights.filter((f) => f.id !== id));
+      }),
+    );
+  }
+
+  /** Get a snapshot of flights (for synchronous access if needed) */
   getFlightsSnapshot(): Flight[] {
-    return [...this.flightsData]; // shallow copy
+    return [...this.flightsSubject.getValue()];
   }
 }
