@@ -1,34 +1,46 @@
 <div class="order-grid">
   <div *ngFor="let flight of upcomingOrders" class="order-card">
-    <!-- Header -->
-    <div class="card-header">
-      <strong>{{ flight.brand }}</strong>
-      <span class="plane">{{ flight.planeType }}</span>
-    </div>
+    <!-- HEADER -->
+    <header class="card-header">
+      <div class="header-left">
+        <strong class="brand">{{ flight.brand }}</strong>
+        <span class="plane">{{ flight.planeType }}</span>
+      </div>
 
-    <!-- Meta -->
-    <div class="card-meta">
+      <div class="header-right">
+        <span class="flight-id">Flight ID: {{ flight.id }}</span>
+        <span *ngIf="flight.orderInfo" class="order-id"> Order ID: {{ flight.orderInfo.id }} </span>
+      </div>
+    </header>
+
+    <!-- META -->
+    <section class="card-meta">
       <div class="meta">
         <span class="label">Seats</span>
         <span class="value">{{ flight.seats }}</span>
       </div>
 
-      <div class="meta status" [class.complete]="flight.orderInfo.status === 'COMPLETE'">
+      <div
+        *ngIf="flight.orderInfo"
+        class="meta status"
+        [ngClass]="flight.orderInfo.status.toLowerCase()"
+      >
         {{ flight.orderInfo.status }}
       </div>
-    </div>
+    </section>
 
-    <!-- Actions -->
-    <div class="card-actions">
-      <button type="button" class="ghost" (click)="onEdit(flight.id)">Edit</button>
+    <!-- ACTIONS -->
+    <footer class="card-actions">
+      <button class="btn btn-ghost" (click)="onEdit(flight.id)">Edit</button>
 
       <select
-        [value]="flight.orderInfo.status"
-        (change)="onStatusChange(flight.id, $any($event.target).value)"
+        [value]="flight.orderInfo ? flight.orderInfo.status : 'PENDING'"
+        (change)="onStatusChange(flight.id, $event)"
+        aria-label="Change order status"
       >
         <option value="PENDING">Pending</option>
         <option value="COMPLETE">Complete</option>
       </select>
-    </div>
+    </footer>
   </div>
 </div>

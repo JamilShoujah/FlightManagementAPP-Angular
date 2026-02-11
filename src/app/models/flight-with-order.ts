@@ -3,5 +3,5 @@ import { Flight } from './flights.model';
 import { FlightOrder } from './order.models';
 
 export interface FlightWithOrder extends Flight {
-  orderInfo: FlightOrder;
+  orderInfo: FlightOrder | null;
 }

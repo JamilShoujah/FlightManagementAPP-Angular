@@ -1,14 +1,21 @@
-// src/app/models/order.models.ts
-export type OrderStatus = 'PENDING' | 'COMPLETE';
+export type OrderStatus = 'PENDING' | 'CONFIRMED' | 'COMPLETE';
 
 export interface OrderedFoodItem {
-  foodId: number;
+  id: number;
+  name: string;
   quantity: number;
 }
 
 export interface FlightOrder {
-  flightId: number; // Links to Flight.id
+  id: number; // backend generated
+  flightId: number;
   status: OrderStatus;
   itemsRequested: OrderedFoodItem[];
   lastUpdated: Date;
 }
+
+/**
+ * Used when CREATING a new order
+ * (no id because backend generates it)
+ */
+export type CreateFlightOrder = Omit<FlightOrder, 'id'>;
