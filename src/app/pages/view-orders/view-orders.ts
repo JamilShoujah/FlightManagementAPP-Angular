@@ -150,14 +150,15 @@ export class ViewOrders implements OnInit {
 
     try {
       if (flight.orderInfo) {
-        // ✅ UPDATE
         await firstValueFrom(this.orderService.updateOrderItems(flightId, items));
       } else {
-        // ✅ CREATE (no id)
-        const newOrder: CreateFlightOrder = {
-          flightId,
+        const newOrder = {
+          flight: { id: flightId },
           status: 'PENDING',
-          itemsRequested: items,
+          itemsRequested: items.map((item: any) => ({
+            foodId: item.id,
+            quantity: item.quantity,
+          })),
           lastUpdated: new Date(),
         };
 

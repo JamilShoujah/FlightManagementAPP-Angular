@@ -1,9 +1,13 @@
-export type OrderStatus = 'PENDING' | 'CONFIRMED' | 'COMPLETE';
+export type OrderStatus = 'PENDING' | 'COMPLETE';
 
 export interface OrderedFoodItem {
-  id: number;
-  name: string;
+  id?: number; // The database ID (optional for new items)
   quantity: number;
+  foodOption?: {
+    // This maps to the ManyToOne relationship in Java
+    id: number;
+    name?: string;
+  };
 }
 
 export interface FlightOrder {
@@ -18,4 +22,9 @@ export interface FlightOrder {
  * Used when CREATING a new order
  * (no id because backend generates it)
  */
-export type CreateFlightOrder = Omit<FlightOrder, 'id'>;
+export interface CreateFlightOrder {
+  flight: { id: number }; // Change this
+  status: string;
+  itemsRequested: OrderedFoodItem[];
+  lastUpdated: Date;
+}
