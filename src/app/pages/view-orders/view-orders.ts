@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { combineLatest, Observable, firstValueFrom } from 'rxjs';
+import { HttpErrorResponse } from '@angular/common/http';
 
 import { Flight } from '../../models/flights.model';
 import { FlightService } from '../../services/flights.service';
@@ -63,6 +64,10 @@ export class ViewOrders implements OnInit {
 
   today$!: Observable<Date>;
   orderQuantities: Record<number, number> = {};
+
+  private resolveItemFoodId(item: OrderedFoodItem): number | undefined {
+    return item.foodId ?? item.foodOption?.id ?? item.id;
+  }
 
   // ✅ Logs every time upcomingOrders changes
   logUpcomingOrders = effect(() => {
@@ -151,7 +156,8 @@ export class ViewOrders implements OnInit {
 
     this.FOODOPTIONS.forEach((opt) => {
       quantities[opt.id] =
-        flight.orderInfo?.itemsRequested.find((i) => i.id === opt.id)?.quantity || 0;
+        flight.orderInfo?.itemsRequested.find((i) => this.resolveItemFoodId(i) === opt.id)?.quantity ||
+        0;
     });
 
     this.orderQuantities = quantities;
@@ -183,12 +189,9 @@ export class ViewOrders implements OnInit {
         await firstValueFrom(this.orderService.updateOrderItems(flightId, items));
       } else {
         const newOrder = {
-          flight: { id: flightId },
+          flightId,
           status: 'PENDING',
-          itemsRequested: items.map((item: any) => ({
-            foodId: item.id,
-            quantity: item.quantity,
-          })),
+          itemsRequested: items,
           lastUpdated: new Date(),
         };
 
@@ -204,6 +207,13 @@ export class ViewOrders implements OnInit {
       this.processData(flights, orders);
     } catch (err) {
       console.error(err);
+      if (err instanceof HttpErrorResponse) {
+        console.error('saveOrder request failed', {
+          status: err.status,
+          url: err.url,
+          error: err.error,
+        });
+      }
       alert('Error saving order.');
     }
   }

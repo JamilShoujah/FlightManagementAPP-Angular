@@ -21,6 +21,37 @@ export class OrderService {
     this.loadOrders();
   }
 
+  private resolveFoodId(item: OrderedFoodItem): number | undefined {
+    return item.foodId ?? item.foodOption?.id ?? item.id;
+  }
+
+  private toApiItems(items: OrderedFoodItem[]): Array<{ foodId: number; quantity: number }> {
+    const normalized = items
+      .map((item) => ({
+        foodId: Number(this.resolveFoodId(item)),
+        quantity: Number(item.quantity),
+      }))
+      .filter(
+        (
+          item,
+        ): item is {
+          foodId: number;
+          quantity: number;
+        } => Number.isFinite(item.foodId) && item.foodId > 0 && Number.isFinite(item.quantity),
+      );
+
+    const hasInvalidPositiveQuantity = items.some((item) => {
+      const quantity = Number(item.quantity);
+      return quantity > 0 && !Number.isFinite(Number(this.resolveFoodId(item)));
+    });
+
+    if (hasInvalidPositiveQuantity) {
+      throw new Error('Invalid food item payload: missing foodId');
+    }
+
+    return normalized.filter((item) => item.quantity > 0);
+  }
+
   private parseArrayResponse<T>(raw: unknown, resourceName: string): T[] {
     if (Array.isArray(raw)) return raw as T[];
     if (raw == null) return [];
@@ -81,7 +112,14 @@ export class OrderService {
 
   /** Add a new order */
   addOrder(order: CreateFlightOrder): Observable<FlightOrder> {
-    return this.http.post<FlightOrder>(this.apiUrl, order).pipe(
+    const payload = {
+      flightId: order.flightId,
+      status: order.status,
+      itemsRequested: this.toApiItems(order.itemsRequested),
+      lastUpdated: order.lastUpdated,
+    };
+
+    return this.http.post<FlightOrder>(this.apiUrl, payload).pipe(
       tap((created) => {
         const current = this.getOrdersSnapshot();
         this.ordersSubject.next([...current, created]);
@@ -104,8 +142,13 @@ export class OrderService {
     const order = this.getOrderByFlightId(flightId);
     if (!order) throw new Error('Order not found');
 
-    const updatedOrder = { ...order, status, lastUpdated: new Date() };
-    return this.http.post<FlightOrder>(this.apiUrl, updatedOrder).pipe(
+    const updatedOrder = {
+      ...order,
+      status,
+      itemsRequested: this.toApiItems(order.itemsRequested),
+      lastUpdated: new Date(),
+    };
+    return this.http.put<FlightOrder>(`${this.apiUrl}/${order.id}`, updatedOrder).pipe(
       tap((resp) => {
         const orders = this.getOrdersSnapshot().map((o) => (o.id === resp.id ? resp : o));
         this.ordersSubject.next(orders);
@@ -118,8 +161,12 @@ export class OrderService {
     const order = this.getOrderByFlightId(flightId);
     if (!order) throw new Error('Order not found');
 
-    const updatedOrder = { ...order, itemsRequested: items, lastUpdated: new Date() };
-    return this.http.post<FlightOrder>(this.apiUrl, updatedOrder).pipe(
+    const updatedOrder = {
+      ...order,
+      itemsRequested: this.toApiItems(items),
+      lastUpdated: new Date(),
+    };
+    return this.http.put<FlightOrder>(`${this.apiUrl}/${order.id}`, updatedOrder).pipe(
       tap((resp) => {
         const orders = this.getOrdersSnapshot().map((o) => (o.id === resp.id ? resp : o));
         this.ordersSubject.next(orders);

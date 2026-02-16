@@ -36,6 +36,52 @@ ng build
 
 This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
 
+## Environment Configuration
+
+This app now uses separate environment files for local and production API endpoints:
+
+- `src/environments/environment.ts` for local development (`http://localhost:8080`)
+- `src/environments/environment.production.ts` for production builds
+
+Angular production builds automatically replace `environment.ts` with `environment.production.ts` via `angular.json` file replacements.
+
+## Docker (Frontend Container)
+
+Use one command and switch only the environment flag:
+
+```bash
+npm run docker:up -- --env=dev
+npm run docker:up -- --env=prod
+```
+
+- `--env=dev` starts `docker compose` with the `dev` profile (build + run)
+- `--env=prod` starts `docker compose` with the `prod` profile (build + run)
+- Containers run detached by default (`-d`)
+
+Stop them with:
+
+```bash
+npm run docker:down -- --env=dev
+npm run docker:down -- --env=prod
+```
+
+Run in foreground (stream logs):
+
+```bash
+npm run docker:up -- --env=dev --foreground
+```
+
+Optional image-only build (without starting compose):
+
+```bash
+npm run docker:build -- --env=dev
+npm run docker:build -- --env=prod
+```
+
+Open `http://localhost:4200`.
+
+The Docker image serves the Angular app with Nginx and includes SPA route fallback (`/index.html`).
+
 ## Running unit tests
 
 To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
