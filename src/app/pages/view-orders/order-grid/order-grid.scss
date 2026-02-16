@@ -15,12 +15,13 @@
   flex-direction: column;
   gap: 0.75rem;
   transition:
-    transform 0.15s ease,
-    box-shadow 0.15s ease;
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+  cursor: default;
 
   &:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
+    transform: translateY(-4px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.12);
   }
 }
 
@@ -30,17 +31,46 @@
   justify-content: space-between;
   align-items: center;
 
-  strong {
-    font-size: 1.05rem;
-    font-weight: 700;
+  .header-left {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+
+    strong.brand {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: $color-text;
+    }
+
+    .plane {
+      font-size: 0.8rem;
+      padding: 0.25rem 0.6rem;
+      border-radius: 999px;
+      background: $color-muted;
+      color: $color-text-light;
+      font-weight: 600;
+    }
   }
 
-  .plane {
-    font-size: 0.8rem;
-    padding: 0.25rem 0.6rem;
-    border-radius: 999px;
-    background: $color-muted;
+  .header-right {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    font-size: 0.75rem;
     color: $color-text-light;
+
+    .flight-id,
+    .order-id {
+      margin: 0;
+      padding: 0.1rem 0.4rem;
+      border-radius: 6px;
+      background: rgba(0, 0, 0, 0.05);
+    }
+
+    .order-id {
+      margin-top: 0.2rem;
+      font-weight: 600;
+    }
   }
 }
 
@@ -57,25 +87,35 @@
     .label {
       font-size: 0.7rem;
       color: $color-text-light;
+      margin-bottom: 0.1rem;
     }
 
     .value {
-      font-size: 1rem;
+      font-size: 1.1rem;
       font-weight: 600;
+      color: $color-text;
     }
   }
 
   .status {
     font-size: 0.75rem;
     font-weight: 700;
-    padding: 0.35rem 0.6rem;
+    padding: 0.35rem 0.75rem;
     border-radius: 999px;
-    background: rgba(234, 179, 8, 0.18);
-    color: $color-warning;
+    text-transform: uppercase;
+    text-align: center;
+    transition:
+      background 0.2s,
+      color 0.2s;
 
     &.complete {
-      background: rgba(34, 197, 94, 0.18);
-      color: $color-success;
+      background: rgba(34, 197, 94, 0.2);
+      color: #22c55e;
+    }
+
+    &.pending {
+      background: rgba(234, 179, 8, 0.2);
+      color: #eab308;
     }
   }
 }
@@ -95,14 +135,17 @@
     border-radius: 10px;
     border: none;
     cursor: pointer;
-  }
+    transition:
+      background 0.2s,
+      color 0.2s;
 
-  .ghost {
-    background: $color-primary;
-    color: $color-card;
+    &.btn-ghost {
+      background: $color-primary;
+      color: $color-card;
 
-    &:hover {
-      color: $color-text;
+      &:hover {
+        color: $color-text;
+      }
     }
   }
 
@@ -112,10 +155,32 @@
     border-radius: 10px;
     border: 1px solid $color-muted-dark;
     background: white;
+    cursor: pointer;
+    transition: border-color 0.2s;
 
     &:focus {
       outline: none;
       border-color: $color-primary;
     }
+  }
+}
+
+/* ---------- RESPONSIVE ---------- */
+@media (max-width: 480px) {
+  .card-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.25rem;
+
+    .header-right {
+      align-items: flex-start;
+      margin-top: 0.4rem;
+    }
+  }
+
+  .card-actions {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.5rem;
   }
 }

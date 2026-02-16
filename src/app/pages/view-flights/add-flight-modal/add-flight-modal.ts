@@ -103,11 +103,7 @@ export class AddFlightModalComponent {
   submit() {
     if (this.flightForm.invalid) return;
 
-    const newFlight: Flight = {
-      id: Date.now(),
-      ...this.flightForm.getRawValue(),
-    };
-
+    const newFlight: Flight = this.flightForm.getRawValue(); // id is optional
     this.submitFlight.emit(newFlight);
     this.closeModal();
   }

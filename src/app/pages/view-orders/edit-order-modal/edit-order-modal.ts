@@ -9,8 +9,8 @@ import {
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { FlightWithOrder } from '../../../models/flight&order.model';
 import { OrderedFoodItem } from '../../../models/order.models';
+import { FlightWithOrder } from '../../../models/flight-with-order';
 
 @Component({
   selector: 'app-edit-order-modal',
@@ -33,10 +33,16 @@ export class EditOrderModalComponent implements OnChanges {
     if (changes['flight'] && this.flight) {
       // Initialize quantities from the flight's orderInfo
       this.orderQuantities = {};
+
+      // Only proceed if orderInfo exists
+      const items = this.flight.orderInfo?.itemsRequested ?? [];
+
       this.foodOptions.forEach((opt) => {
-        this.orderQuantities[opt.id] =
-          this.flight!.orderInfo.itemsRequested.find((i) => i.foodId === opt.id)?.quantity || 0;
+        // Find quantity from the order, default to 0 if not found or orderInfo is null
+        const orderedItem = items.find((i) => i.id === opt.id);
+        this.orderQuantities[opt.id] = orderedItem?.quantity ?? 0;
       });
+
       this.recalculateTotals();
     }
   }
@@ -56,8 +62,16 @@ export class EditOrderModalComponent implements OnChanges {
     if (!this.flight) return;
 
     const items: OrderedFoodItem[] = Object.entries(this.orderQuantities)
-      .map(([foodId, quantity]) => ({ foodId: Number(foodId), quantity }))
-      .filter((i) => i.quantity > 0);
+      .filter(([_, quantity]) => quantity > 0)
+      .map(([foodId, quantity]) => {
+        const food = this.foodOptions.find((f) => f.id === Number(foodId));
+
+        return {
+          id: food!.id,
+          name: food!.name,
+          quantity: quantity as number,
+        };
+      });
 
     this.save.emit(items);
   }
