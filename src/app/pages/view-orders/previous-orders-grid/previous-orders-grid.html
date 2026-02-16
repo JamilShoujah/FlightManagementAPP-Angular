@@ -16,15 +16,16 @@
           </div>
         </td>
         <td>
-          <span class="status-pill" [ngClass]="flight.orderInfo.status.toLowerCase()">
-            {{ flight.orderInfo.status }}
+          <span class="status-pill" [ngClass]="flight.orderInfo?.status?.toLowerCase() || 'none'">
+            {{ flight.orderInfo?.status || 'No Order' }}
           </span>
         </td>
         <td>
           <div class="items-list">
-            <div class="history-item" *ngFor="let item of flight.orderInfo.itemsRequested">
+            <div class="history-item" *ngFor="let item of flight.orderInfo?.itemsRequested">
               {{ getFoodName(item.foodId) }} × {{ item.quantity }}
             </div>
+            <div *ngIf="!flight.orderInfo">—</div>
           </div>
         </td>
       </tr>
