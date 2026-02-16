@@ -86,6 +86,16 @@ export class ViewOrders implements OnInit {
 
   private processData(flights: Flight[], orders: FlightOrder[]) {
     const now = new Date();
+    const getSortTimestamp = (flight: FlightWithOrder): number => {
+      const updatedAt = flight.orderInfo?.lastUpdated
+        ? new Date(flight.orderInfo.lastUpdated).getTime()
+        : NaN;
+
+      if (!Number.isNaN(updatedAt)) return updatedAt;
+
+      const departedAt = new Date(`${flight.departureDate}T${flight.departureTime}`).getTime();
+      return Number.isNaN(departedAt) ? 0 : departedAt;
+    };
 
     const enriched: FlightWithOrder[] = flights
       .filter((f) => f.foodRequested)
@@ -99,11 +109,31 @@ export class ViewOrders implements OnInit {
       });
 
     this.upcomingOrders.set(
-      enriched.filter((f) => new Date(`${f.departureDate}T${f.departureTime}`) >= now),
+      enriched.filter((f) => {
+        const isDeparted = new Date(`${f.departureDate}T${f.departureTime}`) < now;
+        const isComplete = f.orderInfo?.status === 'COMPLETE';
+
+        return !isDeparted && !isComplete;
+      }),
     );
 
     this.previousOrders.set(
-      enriched.filter((f) => new Date(`${f.departureDate}T${f.departureTime}`) < now),
+      enriched
+        .filter((f) => {
+          if (!f.orderInfo) return false;
+
+          const isDeparted = new Date(`${f.departureDate}T${f.departureTime}`) < now;
+          const isComplete = f.orderInfo.status === 'COMPLETE';
+
+          return isDeparted || isComplete;
+        })
+        .sort((a, b) => {
+          const aComplete = a.orderInfo?.status === 'COMPLETE' ? 1 : 0;
+          const bComplete = b.orderInfo?.status === 'COMPLETE' ? 1 : 0;
+
+          if (aComplete !== bComplete) return bComplete - aComplete;
+          return getSortTimestamp(b) - getSortTimestamp(a);
+        }),
     );
   }
 
@@ -179,13 +209,11 @@ export class ViewOrders implements OnInit {
   }
 
   async updateStatus(flightId: number, status: OrderStatus) {
+    const flight = [...this.upcomingOrders(), ...this.previousOrders()].find((f) => f.id === flightId);
+    if (!flight?.orderInfo || flight.orderInfo.status === status) return;
+
     try {
       await firstValueFrom(this.orderService.updateOrderStatus(flightId, status));
-
-      const flights = await firstValueFrom(this.flightService.getFlights());
-      const orders = await firstValueFrom(this.orderService.getOrders());
-
-      this.processData(flights, orders);
     } catch (err) {
       console.error(err);
       alert('Error updating status.');

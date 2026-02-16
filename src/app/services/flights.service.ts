@@ -20,10 +20,40 @@ export class FlightService {
     this.loadFlights(); // initialize with current data from backend
   }
 
+  private parseArrayResponse<T>(raw: unknown, resourceName: string): T[] {
+    if (Array.isArray(raw)) return raw as T[];
+    if (raw == null) return [];
+
+    if (typeof raw === 'string') {
+      const trimmed = raw.trim();
+      if (!trimmed) return [];
+
+      try {
+        const parsed = JSON.parse(trimmed) as unknown;
+        return this.parseArrayResponse<T>(parsed, resourceName);
+      } catch (err) {
+        console.error(`Failed to parse ${resourceName} response as JSON`, err, raw);
+        return [];
+      }
+    }
+
+    if (typeof raw === 'object') {
+      const wrapped = raw as { data?: unknown; content?: unknown };
+      if (Array.isArray(wrapped.data)) return wrapped.data as T[];
+      if (Array.isArray(wrapped.content)) return wrapped.content as T[];
+    }
+
+    console.error(`Unexpected ${resourceName} response shape`, raw);
+    return [];
+  }
+
   /** Load flights from backend */
   private loadFlights(): void {
-    this.http.get<Flight[]>(this.apiUrl).subscribe({
-      next: (flights) => this.flightsSubject.next(flights),
+    this.http.get(this.apiUrl, { responseType: 'text' }).subscribe({
+      next: (raw) => {
+        const flights = this.parseArrayResponse<Flight>(raw, 'flights');
+        this.flightsSubject.next(flights);
+      },
       error: (err) => console.error('Failed to load flights', err),
     });
   }

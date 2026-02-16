@@ -28,9 +28,10 @@ export class UpcomingOrdersGridComponent {
   onStatusChange(flightId: number, event: Event) {
     const select = event.target as HTMLSelectElement | null;
     if (!select) return; // safely handle null
-    const newStatus = select.value;
+    const newStatus = select.value as OrderStatus;
 
-    // Now you can update the status
-    console.log(`Flight ${flightId} new status: ${newStatus}`);
+    if (newStatus !== 'PENDING' && newStatus !== 'COMPLETE') return;
+
+    this.statusChange.emit({ flightId, status: newStatus });
   }
 }
