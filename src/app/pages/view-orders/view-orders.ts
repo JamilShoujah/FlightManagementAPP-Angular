@@ -1,9 +1,8 @@
 // src/app/pages/view-orders/view-orders.ts
-import { Component, OnInit, inject, signal, effect } from '@angular/core';
+import { Component, OnDestroy, OnInit, inject, signal, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
-import { combineLatest, Observable, firstValueFrom } from 'rxjs';
+import { combineLatest, Observable, Subscription, firstValueFrom } from 'rxjs';
 import { HttpErrorResponse } from '@angular/common/http';
 
 import { Flight } from '../../models/flights.model';
@@ -42,10 +41,9 @@ import { FlightWithOrder } from '../../models/flight-with-order';
   templateUrl: './view-orders.html',
   styleUrls: ['./view-orders.scss'],
 })
-export class ViewOrders implements OnInit {
+export class ViewOrders implements OnInit, OnDestroy {
   private flightService = inject(FlightService);
   private orderService = inject(OrderService);
-  private router = inject(Router);
   private clockService = inject(ClockService);
 
   FOODOPTIONS = FOODOPTIONS;
@@ -61,9 +59,13 @@ export class ViewOrders implements OnInit {
 
   activeTab: OrderTab = 'upcoming';
   selectedFlightId: number | null = null;
+  isLoading = true;
+  loadError: string | null = null;
+  skeletonRows = Array.from({ length: 6 }, (_, index) => index);
 
   today$!: Observable<Date>;
   orderQuantities: Record<number, number> = {};
+  private subscriptions = new Subscription();
 
   private resolveItemFoodId(item: OrderedFoodItem): number | undefined {
     return item.foodId ?? item.foodOption?.id ?? item.id;
@@ -81,12 +83,34 @@ export class ViewOrders implements OnInit {
     this.today$ = this.clockService.now$;
     this.foodMap = Object.fromEntries(this.FOODOPTIONS.map((f) => [f.id, f.name]));
 
-    combineLatest([this.flightService.getFlights(), this.orderService.getOrders()]).subscribe(
-      ([flights, orders]) => {
-        console.log('📦 Orders from backend:', orders);
-        this.processData(flights, orders);
-      },
+    this.subscriptions.add(
+      combineLatest([this.flightService.loading$, this.orderService.loading$]).subscribe(
+        ([flightsLoading, ordersLoading]) => {
+          this.isLoading = flightsLoading || ordersLoading;
+        },
+      ),
     );
+
+    this.subscriptions.add(
+      combineLatest([this.flightService.error$, this.orderService.error$]).subscribe(
+        ([flightError, orderError]) => {
+          this.loadError = orderError ?? flightError;
+        },
+      ),
+    );
+
+    this.subscriptions.add(
+      combineLatest([this.flightService.getFlights(), this.orderService.getOrders()]).subscribe(
+        ([flights, orders]) => {
+          console.log('📦 Orders from backend:', orders);
+          this.processData(flights, orders);
+        },
+      ),
+    );
+  }
+
+  ngOnDestroy() {
+    this.subscriptions.unsubscribe();
   }
 
   private processData(flights: Flight[], orders: FlightOrder[]) {
@@ -232,6 +256,15 @@ export class ViewOrders implements OnInit {
 
   getFoodName(foodId?: number): string {
     return foodId != null ? this.foodMap[foodId] || '' : '';
+  }
+
+  get hasAnyOrders(): boolean {
+    return this.upcomingOrders().length > 0 || this.previousOrders().length > 0;
+  }
+
+  retryLoadOrders() {
+    this.flightService.refreshFlights();
+    this.orderService.refreshOrders();
   }
 
   get filteredFoodOptions() {

@@ -1,8 +1,8 @@
 // src/app/services/flights.service.ts
 
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, Observable, tap } from 'rxjs';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { BehaviorSubject, Observable, finalize, tap } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { Flight } from '../models/flights.model';
 
@@ -15,9 +15,51 @@ export class FlightService {
   // Local cache for reactive updates
   private flightsSubject = new BehaviorSubject<Flight[]>([]);
   flights$ = this.flightsSubject.asObservable(); // public observable
+  private loadingSubject = new BehaviorSubject<boolean>(false);
+  loading$ = this.loadingSubject.asObservable();
+  private errorSubject = new BehaviorSubject<string | null>(null);
+  error$ = this.errorSubject.asObservable();
 
   constructor(private http: HttpClient) {
     this.loadFlights(); // initialize with current data from backend
+  }
+
+  private asRecord(value: unknown): Record<string, unknown> | null {
+    return value != null && typeof value === 'object' ? (value as Record<string, unknown>) : null;
+  }
+
+  private toString(value: unknown, fallback = ''): string {
+    if (value == null) return fallback;
+    return typeof value === 'string' ? value : String(value);
+  }
+
+  private toNumber(value: unknown, fallback = 0): number {
+    const parsed = Number(value);
+    return Number.isFinite(parsed) ? parsed : fallback;
+  }
+
+  private toBoolean(value: unknown, fallback = false): boolean {
+    if (typeof value === 'boolean') return value;
+    if (typeof value === 'string') return value.toLowerCase() === 'true';
+    if (typeof value === 'number') return value !== 0;
+    return fallback;
+  }
+
+  private extractWrappedArray<T>(record: Record<string, unknown>): T[] | null {
+    const arrayKeys = ['data', 'content', 'items', 'results', 'flights', 'value'];
+    for (const key of arrayKeys) {
+      const candidate = record[key];
+      if (Array.isArray(candidate)) return candidate as T[];
+    }
+
+    const embedded = this.asRecord(record['_embedded']);
+    if (embedded) {
+      for (const value of Object.values(embedded)) {
+        if (Array.isArray(value)) return value as T[];
+      }
+    }
+
+    return null;
   }
 
   private parseArrayResponse<T>(raw: unknown, resourceName: string): T[] {
@@ -37,30 +79,91 @@ export class FlightService {
       }
     }
 
-    if (typeof raw === 'object') {
-      const wrapped = raw as { data?: unknown; content?: unknown };
-      if (Array.isArray(wrapped.data)) return wrapped.data as T[];
-      if (Array.isArray(wrapped.content)) return wrapped.content as T[];
+    const record = this.asRecord(raw);
+    if (record) {
+      const wrappedArray = this.extractWrappedArray<T>(record);
+      if (wrappedArray) return wrappedArray;
+
+      if ('id' in record || 'flightId' in record || 'flight_id' in record) {
+        return [record as T];
+      }
     }
 
     console.error(`Unexpected ${resourceName} response shape`, raw);
     return [];
   }
 
+  private normalizeFlight(raw: unknown): Flight | null {
+    const record = this.asRecord(raw);
+    if (!record) return null;
+
+    const id = this.toNumber(record['id'] ?? record['flightId'] ?? record['flight_id'], NaN);
+    if (!Number.isFinite(id)) return null;
+
+    return {
+      id,
+      brand: this.toString(record['brand'] ?? record['airline'] ?? record['airliner']),
+      planeType: this.toString(
+        record['planeType'] ?? record['plane_type'] ?? record['aircraftType'],
+      ),
+      crewCount: this.toNumber(record['crewCount'] ?? record['crew_count']),
+      seats: this.toNumber(record['seats']),
+      preferredFood: this.toString(
+        record['preferredFood'] ?? record['preferred_food'] ?? record['foodPreference'],
+        'Mixed',
+      ) as Flight['preferredFood'],
+      arrivalDate: this.toString(
+        record['arrivalDate'] ?? record['arrival_date'] ?? record['arrival'],
+      ),
+      departureDate: this.toString(
+        record['departureDate'] ?? record['departure_date'] ?? record['departure'],
+      ),
+      departureTime: this.toString(record['departureTime'] ?? record['departure_time']),
+      foodRequested: this.toBoolean(record['foodRequested'] ?? record['food_requested']),
+    };
+  }
+
   /** Load flights from backend */
   private loadFlights(): void {
-    this.http.get(this.apiUrl, { responseType: 'text' }).subscribe({
-      next: (raw) => {
-        const flights = this.parseArrayResponse<Flight>(raw, 'flights');
-        this.flightsSubject.next(flights);
-      },
-      error: (err) => console.error('Failed to load flights', err),
-    });
+    this.loadingSubject.next(true);
+    this.errorSubject.next(null);
+
+    this.http
+      .get(this.apiUrl, { responseType: 'text' })
+      .pipe(finalize(() => this.loadingSubject.next(false)))
+      .subscribe({
+        next: (raw) => {
+          const parsed = this.parseArrayResponse<unknown>(raw, 'flights');
+          const flights = parsed
+            .map((item) => this.normalizeFlight(item))
+            .filter((flight): flight is Flight => flight !== null);
+
+          if (parsed.length > 0 && flights.length === 0) {
+            console.error('Flights payload received, but no rows matched the expected schema', raw);
+          }
+
+          if (parsed.length === 0) {
+            console.warn('No flights returned by API');
+          }
+
+          this.flightsSubject.next(flights);
+        },
+        error: (err: HttpErrorResponse) => {
+          console.error('Failed to load flights', err);
+          const withStatus = err.status ? ` (${err.status})` : '';
+          this.errorSubject.next(`Unable to load flights${withStatus}. Please try again.`);
+        },
+      });
   }
 
   /** Get flights as observable */
   getFlights(): Observable<Flight[]> {
     return this.flights$;
+  }
+
+  /** Force reload flights from backend */
+  refreshFlights(): void {
+    this.loadFlights();
   }
 
   /** Get a single flight by ID */

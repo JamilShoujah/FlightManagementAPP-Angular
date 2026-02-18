@@ -22,6 +22,91 @@ app-flights-table {
   margin-top: 0.75rem;
 }
 
+.loading-state {
+  background: #eff8ff;
+  border: 1px solid #b2ddff;
+  color: #175cd3;
+  border-radius: 14px;
+  padding: 0.75rem 1rem;
+  font-size: 0.92rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+}
+
+.loading-spinner {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 2px solid #bfdbfe;
+  border-top-color: #2563eb;
+  animation: spin 0.75s linear infinite;
+  flex-shrink: 0;
+}
+
+.error-state {
+  background: #fef3f2;
+  border: 1px solid #fecdca;
+  color: #b42318;
+  border-radius: 14px;
+  padding: 0.75rem 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+
+  p {
+    margin: 0;
+  }
+}
+
+.retry-button {
+  border: 1px solid #fda29b;
+  background: #fff;
+  color: #b42318;
+  border-radius: 10px;
+  padding: 0.4rem 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.skeleton-table {
+  background: #fff;
+  border: 1px solid #eaecf0;
+  border-radius: 14px;
+  overflow: hidden;
+}
+
+.skeleton-row {
+  height: 52px;
+  border-bottom: 1px solid #f2f4f7;
+  background: linear-gradient(90deg, #f8fafc 25%, #eef2f6 37%, #f8fafc 63%);
+  background-size: 400% 100%;
+  animation: shimmer 1.4s ease infinite;
+
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.empty-state {
+  background: #fff;
+  border: 1px dashed #d0d5dd;
+  border-radius: 14px;
+  padding: 1.25rem;
+  color: #344054;
+
+  h3 {
+    margin: 0;
+    font-size: 1.1rem;
+  }
+
+  p {
+    margin: 0.5rem 0 0;
+    color: #667085;
+  }
+}
+
 .fab-button {
   position: fixed;
   bottom: 2rem;
@@ -66,6 +151,21 @@ app-flights-table {
 app-add-flight-modal {
   position: relative;
   z-index: 10000;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 100% 0;
+  }
+  100% {
+    background-position: -100% 0;
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 @media (max-width: 768px) {

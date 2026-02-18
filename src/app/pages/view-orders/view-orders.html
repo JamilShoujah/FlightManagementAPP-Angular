@@ -4,23 +4,39 @@
   <ng-container *ngIf="today$ | async as today">
     <app-date-display [date]="today"></app-date-display>
 
-    <app-order-tabs [(activeTab)]="activeTab"></app-order-tabs>
+    <section *ngIf="loadError" class="error-state">
+      <p>{{ loadError }}</p>
+      <button class="retry-button" (click)="retryLoadOrders()">Retry</button>
+    </section>
 
-    <!-- Upcoming Orders -->
-    <app-upcoming-orders-grid
-      *ngIf="activeTab === 'upcoming'"
-      [upcomingOrders]="upcomingOrders()"
-      [getFoodName]="getFoodName"
-      (editOrder)="selectFlight($event)"
-      (statusChange)="updateStatus($event.flightId, $event.status)"
-      (openModal)="showAddModal.set(true)"
-    ></app-upcoming-orders-grid>
+    <section *ngIf="isLoading && hasAnyOrders" class="loading-state">
+      <span class="loading-spinner" aria-hidden="true"></span>
+      <span>Refreshing orders...</span>
+    </section>
 
-    <!-- Previous Orders -->
-    <app-previous-orders-grid
-      *ngIf="activeTab === 'previous'"
-      [orders]="previousOrders()"
-    ></app-previous-orders-grid>
+    <section *ngIf="isLoading && !hasAnyOrders" class="skeleton-list" aria-live="polite">
+      <div class="skeleton-card" *ngFor="let row of skeletonRows"></div>
+    </section>
+
+    <ng-container *ngIf="!isLoading || hasAnyOrders">
+      <app-order-tabs [(activeTab)]="activeTab"></app-order-tabs>
+
+      <!-- Upcoming Orders -->
+      <app-upcoming-orders-grid
+        *ngIf="activeTab === 'upcoming'"
+        [upcomingOrders]="upcomingOrders()"
+        [getFoodName]="getFoodName"
+        (editOrder)="selectFlight($event)"
+        (statusChange)="updateStatus($event.flightId, $event.status)"
+        (openModal)="showAddModal.set(true)"
+      ></app-upcoming-orders-grid>
+
+      <!-- Previous Orders -->
+      <app-previous-orders-grid
+        *ngIf="activeTab === 'previous'"
+        [orders]="previousOrders()"
+      ></app-previous-orders-grid>
+    </ng-container>
 
     <!-- Edit Modal -->
     <app-edit-order-modal

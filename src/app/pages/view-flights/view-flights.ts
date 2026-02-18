@@ -1,6 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Observable } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 
 import { Flight } from '../../models/flights.model';
 import { FlightService } from '../../services/flights.service';
@@ -25,12 +25,16 @@ import { ClockService } from '../../services/clock.service';
   templateUrl: './view-flights.html',
   styleUrls: ['./view-flights.scss'],
 })
-export class ViewFlights implements OnInit {
+export class ViewFlights implements OnInit, OnDestroy {
   flights: Flight[] = [];
   isModalOpen = false;
+  isLoading = true;
+  loadError: string | null = null;
+  skeletonRows = Array.from({ length: 8 }, (_, index) => index);
 
-  hideDeparted = true;
+  hideDeparted = false;
   today$!: Observable<Date>; // 🚀 now reactive
+  private subscriptions = new Subscription();
 
   airlines = AIRLINES;
   foodTypes = FOODTYPESARRAY;
@@ -44,10 +48,28 @@ export class ViewFlights implements OnInit {
     // Subscribe to clock observable
     this.today$ = this.clockService.now$;
 
-    this.flightService.getFlights().subscribe((flights) => {
-      this.flights = flights;
-      this.sortFlights();
-    });
+    this.subscriptions.add(
+      this.flightService.loading$.subscribe((loading) => {
+        this.isLoading = loading;
+      }),
+    );
+
+    this.subscriptions.add(
+      this.flightService.error$.subscribe((error) => {
+        this.loadError = error;
+      }),
+    );
+
+    this.subscriptions.add(
+      this.flightService.getFlights().subscribe((flights) => {
+        this.flights = flights;
+        this.sortFlights();
+      }),
+    );
+  }
+
+  ngOnDestroy(): void {
+    this.subscriptions.unsubscribe();
   }
 
   /** Modal */
@@ -71,6 +93,10 @@ export class ViewFlights implements OnInit {
 
   toggleHideDeparted(value: boolean) {
     this.hideDeparted = value;
+  }
+
+  retryLoadFlights() {
+    this.flightService.refreshFlights();
   }
 
   onSubmit(flight: Flight) {

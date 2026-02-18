@@ -10,11 +10,39 @@
       (toggleHideDepartedEvent)="hideDeparted = $event"
     ></app-flights-header>
 
-    <app-flights-table
-      [filteredFlights]="filteredFlights(today)"
-      [hideDeparted]="hideDeparted"
-      [today]="today"
-    ></app-flights-table>
+    <section *ngIf="loadError" class="error-state">
+      <p>{{ loadError }}</p>
+      <button class="retry-button" (click)="retryLoadFlights()">Retry</button>
+    </section>
+
+    <section *ngIf="isLoading && flights.length > 0" class="loading-state">
+      <span class="loading-spinner" aria-hidden="true"></span>
+      <span>Refreshing flights...</span>
+    </section>
+
+    <section *ngIf="isLoading && flights.length === 0" class="skeleton-table" aria-live="polite">
+      <div class="skeleton-row" *ngFor="let row of skeletonRows"></div>
+    </section>
+
+    <ng-container *ngIf="(!isLoading && !loadError) || flights.length > 0">
+      <ng-container *ngIf="filteredFlights(today).length > 0; else noFlightsState">
+        <app-flights-table
+          [filteredFlights]="filteredFlights(today)"
+          [hideDeparted]="hideDeparted"
+          [today]="today"
+        ></app-flights-table>
+      </ng-container>
+    </ng-container>
+
+    <ng-template #noFlightsState>
+      <section class="empty-state">
+        <h3>No flights to display</h3>
+        <p>
+          The API returned an empty list, or current filters exclude all flights.
+          Switch to <strong>All</strong> or add a new flight.
+        </p>
+      </section>
+    </ng-template>
 
     <button class="fab-button" (click)="openModal()">+</button>
     <app-add-flight-modal
