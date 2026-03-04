@@ -5,6 +5,7 @@ ENV_MODE="dev"
 ACTION="up"
 DETACH=true
 BUILD=true
+API_BASE_URL=""
 
 for arg in "$@"; do
   case "$arg" in
@@ -23,9 +24,12 @@ for arg in "$@"; do
     --foreground)
       DETACH=false
       ;;
+    --api-base-url=*)
+      API_BASE_URL="${arg#--api-base-url=}"
+      ;;
     *)
       echo "Unknown argument: $arg" >&2
-      echo "Usage: npm run docker:up -- --env=dev|prod [--foreground] [--no-build] [--down]" >&2
+      echo "Usage: npm run docker:up -- --env=dev|prod [--foreground] [--no-build] [--down] [--api-base-url=http://host:port]" >&2
       exit 1
       ;;
   esac
@@ -35,6 +39,11 @@ if [ "$ACTION" = "down" ]; then
   echo "Stopping compose profile: $ENV_MODE"
   docker compose --profile "$ENV_MODE" down --remove-orphans
   exit 0
+fi
+
+if [ -n "$API_BASE_URL" ]; then
+  export API_BASE_URL
+  echo "Using API_BASE_URL: $API_BASE_URL"
 fi
 
 CMD="docker compose --profile $ENV_MODE up"

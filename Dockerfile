@@ -10,9 +10,12 @@ COPY . .
 # - development -> uses src/environments/environment.ts
 # - production  -> uses src/environments/environment.production.ts
 ARG BUILD_ENV=production
+ARG API_BASE_URL=http://89.168.124.17:8080
 RUN if [ "$BUILD_ENV" = "development" ] || [ "$BUILD_ENV" = "dev" ]; then \
       npm run build -- --configuration development; \
     elif [ "$BUILD_ENV" = "production" ] || [ "$BUILD_ENV" = "prod" ]; then \
+      echo "Using production API_BASE_URL=$API_BASE_URL"; \
+      sed -i "s|http://89.168.124.17:8080|$API_BASE_URL|g" src/environments/environment.production.ts; \
       npm run build -- --configuration production; \
     else \
       echo "Invalid BUILD_ENV: $BUILD_ENV (allowed: development|production|dev|prod)" >&2; \

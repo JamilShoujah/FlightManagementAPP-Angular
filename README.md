@@ -41,9 +41,15 @@ This will compile your project and store the build artifacts in the `dist/` dire
 This app now uses separate environment files for local and production API endpoints:
 
 - `src/environments/environment.ts` for local development (`http://localhost:8080`)
-- `src/environments/environment.production.ts` for production builds
+- `src/environments/environment.production.ts` for production builds (`http://89.168.124.17:8080` by default)
 
 Angular production builds automatically replace `environment.ts` with `environment.production.ts` via `angular.json` file replacements.
+
+To override the production API endpoint at image build time, pass:
+
+```bash
+--api-base-url=http://your-api-host:8080
+```
 
 ## Docker (Frontend Container)
 
@@ -52,10 +58,12 @@ Use one command and switch only the environment flag:
 ```bash
 npm run docker:up -- --env=dev
 npm run docker:up -- --env=prod
+npm run docker:up -- --env=prod --api-base-url=http://89.168.124.17:8080
 ```
 
 - `--env=dev` starts `docker compose` with the `dev` profile (build + run)
 - `--env=prod` starts `docker compose` with the `prod` profile (build + run)
+- `--api-base-url=...` overrides the production API URL used during image build
 - Containers run detached by default (`-d`)
 
 Stop them with:
@@ -76,6 +84,7 @@ Optional image-only build (without starting compose):
 ```bash
 npm run docker:build -- --env=dev
 npm run docker:build -- --env=prod
+npm run docker:build -- --env=prod --api-base-url=http://89.168.124.17:8080
 ```
 
 Open `http://localhost:4200`.
