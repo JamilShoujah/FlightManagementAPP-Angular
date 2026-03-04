@@ -1,7 +1,7 @@
 // src/app/services/orders.service.ts
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, Observable, tap, map } from 'rxjs';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { BehaviorSubject, Observable, tap, map, finalize } from 'rxjs';
 import { environment } from '../../environments/environment';
 import {
   CreateFlightOrder,
@@ -14,11 +14,46 @@ import {
 export class OrderService {
   private ordersSubject = new BehaviorSubject<FlightOrder[]>([]);
   orders$ = this.ordersSubject.asObservable();
+  private loadingSubject = new BehaviorSubject<boolean>(false);
+  loading$ = this.loadingSubject.asObservable();
+  private errorSubject = new BehaviorSubject<string | null>(null);
+  error$ = this.errorSubject.asObservable();
 
   private apiUrl = `${environment.apiBaseUrl}/orders`;
 
   constructor(private http: HttpClient) {
     this.loadOrders();
+  }
+
+  private resolveFoodId(item: OrderedFoodItem): number | undefined {
+    return item.foodId ?? item.foodOption?.id ?? item.id;
+  }
+
+  private toApiItems(items: OrderedFoodItem[]): Array<{ foodId: number; quantity: number }> {
+    const normalized = items
+      .map((item) => ({
+        foodId: Number(this.resolveFoodId(item)),
+        quantity: Number(item.quantity),
+      }))
+      .filter(
+        (
+          item,
+        ): item is {
+          foodId: number;
+          quantity: number;
+        } => Number.isFinite(item.foodId) && item.foodId > 0 && Number.isFinite(item.quantity),
+      );
+
+    const hasInvalidPositiveQuantity = items.some((item) => {
+      const quantity = Number(item.quantity);
+      return quantity > 0 && !Number.isFinite(Number(this.resolveFoodId(item)));
+    });
+
+    if (hasInvalidPositiveQuantity) {
+      throw new Error('Invalid food item payload: missing foodId');
+    }
+
+    return normalized.filter((item) => item.quantity > 0);
   }
 
   private parseArrayResponse<T>(raw: unknown, resourceName: string): T[] {
@@ -50,13 +85,28 @@ export class OrderService {
 
   /** Load all orders from backend */
   loadOrders() {
-    this.http.get(this.apiUrl, { responseType: 'text' }).subscribe({
-      next: (raw) => {
-        const orders = this.parseArrayResponse<FlightOrder>(raw, 'orders');
-        this.ordersSubject.next(orders);
-      },
-      error: (err) => console.error('Failed to load orders', err),
-    });
+    this.loadingSubject.next(true);
+    this.errorSubject.next(null);
+
+    this.http
+      .get(this.apiUrl, { responseType: 'text' })
+      .pipe(finalize(() => this.loadingSubject.next(false)))
+      .subscribe({
+        next: (raw) => {
+          const orders = this.parseArrayResponse<FlightOrder>(raw, 'orders');
+          this.ordersSubject.next(orders);
+        },
+        error: (err: HttpErrorResponse) => {
+          console.error('Failed to load orders', err);
+          const withStatus = err.status ? ` (${err.status})` : '';
+          this.errorSubject.next(`Unable to load orders${withStatus}. Please try again.`);
+        },
+      });
+  }
+
+  /** Force reload orders from backend */
+  refreshOrders() {
+    this.loadOrders();
   }
 
   /** Observable for all orders */
@@ -81,7 +131,14 @@ export class OrderService {
 
   /** Add a new order */
   addOrder(order: CreateFlightOrder): Observable<FlightOrder> {
-    return this.http.post<FlightOrder>(this.apiUrl, order).pipe(
+    const payload = {
+      flightId: order.flightId,
+      status: order.status,
+      itemsRequested: this.toApiItems(order.itemsRequested),
+      lastUpdated: order.lastUpdated,
+    };
+
+    return this.http.post<FlightOrder>(this.apiUrl, payload).pipe(
       tap((created) => {
         const current = this.getOrdersSnapshot();
         this.ordersSubject.next([...current, created]);
@@ -104,8 +161,13 @@ export class OrderService {
     const order = this.getOrderByFlightId(flightId);
     if (!order) throw new Error('Order not found');
 
-    const updatedOrder = { ...order, status, lastUpdated: new Date() };
-    return this.http.post<FlightOrder>(this.apiUrl, updatedOrder).pipe(
+    const updatedOrder = {
+      ...order,
+      status,
+      itemsRequested: this.toApiItems(order.itemsRequested),
+      lastUpdated: new Date(),
+    };
+    return this.http.put<FlightOrder>(`${this.apiUrl}/${order.id}`, updatedOrder).pipe(
       tap((resp) => {
         const orders = this.getOrdersSnapshot().map((o) => (o.id === resp.id ? resp : o));
         this.ordersSubject.next(orders);
@@ -118,8 +180,12 @@ export class OrderService {
     const order = this.getOrderByFlightId(flightId);
     if (!order) throw new Error('Order not found');
 
-    const updatedOrder = { ...order, itemsRequested: items, lastUpdated: new Date() };
-    return this.http.post<FlightOrder>(this.apiUrl, updatedOrder).pipe(
+    const updatedOrder = {
+      ...order,
+      itemsRequested: this.toApiItems(items),
+      lastUpdated: new Date(),
+    };
+    return this.http.put<FlightOrder>(`${this.apiUrl}/${order.id}`, updatedOrder).pipe(
       tap((resp) => {
         const orders = this.getOrdersSnapshot().map((o) => (o.id === resp.id ? resp : o));
         this.ordersSubject.next(orders);

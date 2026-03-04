@@ -1,0 +1,23 @@
+services:
+  frontend-dev:
+    profiles: ['dev']
+    image: flight-management-system:dev
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        BUILD_ENV: development
+    ports:
+      - '4200:80'
+
+  frontend-prod:
+    profiles: ['prod']
+    image: flight-management-system:prod
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        BUILD_ENV: production
+        API_BASE_URL: ${API_BASE_URL:-http://89.168.124.17:8080}
+    ports:
+      - '4200:80'

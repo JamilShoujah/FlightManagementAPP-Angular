@@ -29,6 +29,10 @@ export class EditOrderModalComponent implements OnChanges {
   currentTotal = signal(0);
   remainingSeats = signal(0);
 
+  private resolveItemFoodId(item: OrderedFoodItem): number | undefined {
+    return item.foodId ?? item.foodOption?.id ?? item.id;
+  }
+
   ngOnChanges(changes: SimpleChanges) {
     if (changes['flight'] && this.flight) {
       // Initialize quantities from the flight's orderInfo
@@ -39,7 +43,7 @@ export class EditOrderModalComponent implements OnChanges {
 
       this.foodOptions.forEach((opt) => {
         // Find quantity from the order, default to 0 if not found or orderInfo is null
-        const orderedItem = items.find((i) => i.id === opt.id);
+        const orderedItem = items.find((i) => this.resolveItemFoodId(i) === opt.id);
         this.orderQuantities[opt.id] = orderedItem?.quantity ?? 0;
       });
 
@@ -67,7 +71,7 @@ export class EditOrderModalComponent implements OnChanges {
         const food = this.foodOptions.find((f) => f.id === Number(foodId));
 
         return {
-          id: food!.id,
+          foodId: food!.id,
           name: food!.name,
           quantity: quantity as number,
         };
